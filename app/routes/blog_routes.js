@@ -1,4 +1,9 @@
 module.exports = function (app, db) {
+
+    app.get('/notes/:id', (req, res) => {
+    
+  });
+    
     app.post('/addblog', (req, res) => {
         const note = {
             text: req.body.body

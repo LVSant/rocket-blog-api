@@ -16,9 +16,9 @@ app.listen(process.env.PORT || 8080, () => {
 
 console.log(" subiu no heroku ");
 
-//MongoClient.connect("mongodb://blogctsdb:blogctsdb@ds125255.mlab.com:25255/blogctsdb", (err, database) => {
-//        if (err) return console.log(err)
-  //      require('./app/routes')(app, database);
+MongoClient.connect("mongodb://bloctsdb:blogctsdb@ds125255.mlab.com:25255/blogctsdb", (err, database) => {
+        if (err) return console.log(err)
+        require('./app/routes')(app, database);
         
-    //})
-    //console.log("Hello World");
+    })
+    console.log("Hello World");

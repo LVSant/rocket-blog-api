@@ -1,6 +1,18 @@
 module.exports = function (app, db) {
 
-    app.get('/notes/:id', (req, res) => {
+    app.get('/blog/:id', (req, res) => {
+    
+  });
+    
+    
+    
+    
+    
+    app.get('/blog', (req, res) => {
+        db.collection('blog').find({}).toArray(function(err, blogs) {
+        
+            if(err) throw error;                                                   
+            res.send(blogs);
     
   });
     
@@ -21,4 +33,7 @@ module.exports = function (app, db) {
             }
         });
     });
+    
+    
+    
 };

@@ -1,33 +1,33 @@
 {
-  "name": "blogcts",
-  "version": "1.0.0",
-  "description": "Blog for UNICAMP-FT lecture of 'Science, Technology and Society'",
-  "main": "index.js",
-  "scripts": {    
-    "dev": "nodemon server.js",
-    "start": "node server.js"
-  },
-  "author": "leonardo viveiros",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/leonardoviveiros/blogcts.git"
-  },
-  "keywords": [
-    "blog",
-    "unicamp",
-    "node"
-  ],
-  "bugs": {
-    "url": "https://github.com/leonardoviveiros/blogcts/issues"
-  },
-  "homepage": "https://github.com/leonardoviveiros/blogcts#readme",
-  "dependencies": {
-    "body-parser": "^1.18.2",
-    "express": "^4.16.2",
-    "mongodb": "^2.2.31"
-  },
-  "devDependencies": {
-    "nodemon": "^1.12.1"
-  }
+    "name": "blogcts"
+    , "version": "1.0.0"
+    , "description": "Blog for UNICAMP-FT lecture of 'Science, Technology and Society'"
+    , "main": "index.js"
+    , "scripts": {
+        "dev": "nodemon server.js"
+        , "start": "node server.js"
+    }
+    , "author": "leonardo viveiros"
+    , "license": "MIT"
+    , "repository": {
+        "type": "git"
+        , "url": "git+https://github.com/leonardoviveiros/blogcts.git"
+    }
+    , "keywords": [
+    "blog"
+    , "unicamp"
+    , "node"
+  ]
+    , "bugs": {
+        "url": "https://github.com/leonardoviveiros/blogcts/issues"
+    }
+    , "homepage": "https://github.com/leonardoviveiros/blogcts#readme"
+    , "dependencies": {
+        "body-parser": "^1.18.2"
+        , "express": "^4.16.2"
+        , "mongodb": "^2.2.31"
+    }
+    , "devDependencies": {
+        "nodemon": "^1.12.1"
+    }
 }

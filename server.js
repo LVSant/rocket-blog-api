@@ -16,7 +16,7 @@ app.listen(process.env.PORT || 8080, () => {
 
 console.log(" subiu no heroku ");
 
-MongoClient.connect("mongodb://bloctsdb:blogctsdb@ds125255.mlab.com:25255/blogctsdb", (err, database) => {
+MongoClient.connect("mongodb://heroku_f7vnmk6r:heroku_f7vnmk6r@ ds125555.mlab.com:25555/heroku_f7vnmk6r", (err, database) => {
         if (err) return console.log(err)
         require('./app/routes')(app, database);
         

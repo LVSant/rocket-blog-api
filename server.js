@@ -17,7 +17,7 @@ app.listen(process.env.PORT || 8080, () => {
 
 
 console.log(" subiu no heroku ");
-console.log(process.env.MONGODB _URI);
+console.log(process.env.MONGODB_URI);
 
 
 mongodb.MongoClient.connect(process.env.MONGODB_URI, (err, database) => {

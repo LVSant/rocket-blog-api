@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "jasmine"
   },
   "author": "leonardo viveiros",
   "license": "MIT",
@@ -31,6 +32,7 @@
     "morgan": "^1.9.0"
   },
   "devDependencies": {
+    "jasmine": "^2.8.0",
     "nodemon": "^1.12.1"
   }
 }

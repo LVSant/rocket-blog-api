@@ -47,6 +47,28 @@ module.exports = function (app, db) {
             }
         });
     });
+    
+    /*  
+     *   PUT one blog; URL: /blog/id 
+     */
+    app.put('/blog/:id', (req, res) => {
+        const updatedBlog
+          const id = req.params.id;
+        const details = { '_id': new ObjectID(id) };
+        const blog = { text: req.params.text, title: req.params.title };
+    db.collection('notes').update(details, blog, (err, result) => {
+            if (err) {
+                res.send({
+                    'error': 'An error has occurred'
+                });
+            }
+            else {
+                res.send(item);
+            }
+        });
+    });
+
+    
     /*  
      *   POST one blog; 
      *   URL: /addblog/

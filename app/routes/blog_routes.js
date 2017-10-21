@@ -14,10 +14,9 @@ module.exports = function (app, db) {
   });
     
     app.post('/addblog', (req, res) => {
-        const note = {
-            text: req.body.body
-            , title: req.body.title
-        };
+        
+        const note = req.body;
+        
         
         db.collection('blog').insert(note, (err, result) => {
             if (err) {

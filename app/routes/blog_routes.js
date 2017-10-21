@@ -1,22 +1,77 @@
-module.exports = function (app, db) {
+var ObjectID = require('mongodb').ObjectID;
 
+module.exports = function (app, db) {
+    
+   /*  
+    *   GET one blog; URL: /blog/id 
+    */
     app.get('/blog/:id', (req, res) => {
-    
-  });
-    
-    
+        const id = req.params.id;
+        const details = {
+            '_id': new ObjectID(id)
+        };
+        db.collection('blog').findOne(details, (err, item) => {
+            if (err) {
+                res.send({'error': 'An error has occurred'});
+            }
+            else {
+                res.send(item);
+            }
+        });
+    });
+
+    /*  
+    *   GET all blogs; URL: /blog/ 
+    */
     app.get('/blog', (req, res) => {
-        db.collection('blog').find({}).toArray(function(err, blogs) {
-        
-            if(err) throw error;                                                   
+        db.collection('blog').find({}).toArray(function (err, blogs) {
+            if (err) throw error;
             res.send(blogs);
         });
-  });
+    });
     
-    app.post('/addblog', function(req, res) {
-            
-        
-        
+  
+   /*  
+    *   DELETE one blog; URL: /blog/id 
+    */
+    app.delete('/blog/:id', (req, res) => {
+        const id = req.params.id;
+        const details = {
+            '_id': new ObjectID(id)
+        };
+        db.collection('blog').remove(details, (err, item) => {
+            if (err) {
+                res.send({'error': 'An error has occurred'});
+            }
+            else {
+                res.send(item);
+            }
+        });
+    });
+    
+    
+/*
+    app.get('/blog', (req, res) => {
+        db.collection('blog').find({}).toArray(function (err, blogs) {
+            if (err) throw error;
+            res.send(blogs);
+        });
+    });
+    
+  */
+    
+    /*  
+    *   POST one blog; 
+    *   URL: /addblog/
+    *   Cotent-Type: application/json
+    *   JSON Create Example:
+    *   {
+    *        "text": "outro",
+    *        "title": "teste"
+    *   }
+    *
+    */
+    app.post('/addblog', function (req, res) {
         db.collection('blog').insert(req.body, (err, result) => {
             if (err) {
                 res.send({
@@ -28,7 +83,4 @@ module.exports = function (app, db) {
             }
         });
     });
-    
-    
-    
 };

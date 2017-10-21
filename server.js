@@ -9,11 +9,12 @@ app.use(bodyParser.json());
 
 
 app.listen(process.env.PORT || 8080, () => {
-            console.log('Blog Rocket API is Live' + port);
+            console.log('Blog Rocket API is Live ' + port);
         });
 
 
-mongodb.MongoClient.connect(process.env.MONGODB_URI, (err, database) => {
+//mongodb.MongoClient.connect(process.env.MONGODB_URI, (err, database) => {
+mongodb.MongoClient.connect('mongodb://heroku_8f0nwmxs:7qc8rqnvai7hnifo20raopp41g@ds227525.mlab.com:27525/heroku_8f0nwmxs', (err, database) => {
         if (err) return console.log(err)
         require('./app/routes')(app, database);
         

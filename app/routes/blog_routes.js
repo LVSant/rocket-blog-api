@@ -14,6 +14,7 @@ module.exports = function (app, db) {
   });
     
     app.post('/addblog', (req, res) => {
+
         
         const note = req.body;
         

@@ -14,25 +14,37 @@ heroku open
 
 ## Routes
 
-GET one blog 
+- GET one blog 
 URL: /blog/id
 
-GET all blogs 
+- GET all blogs 
 URL: /blog/ 
 
-DELETE one blog
+- DELETE one blog
 URL: /blog/id 
 
-PUT one blog
+- PUT one blog
 URL: /blog/id 
+JSON parameter example:
+    {
+        "_id": "blogid",
+        "text": "newcontent",
+        "title": "newtitle"
+    } 
 
-POST one blog; 
+- POST one blog; 
 URL: /addblog/
 Cotent-Type: application/json
-JSON Create Example:
+JSON parameter example:
     {
-        "text": "outro",
-        "title": "teste"
+        "text": "blogcontent",
+        "title": "blogtitle"
+    }
+JSON response example:
+    {
+        "_id": "blogid",
+        "text": "blogcontent",
+        "title": "blogtitle"
     } 
      
 ## License

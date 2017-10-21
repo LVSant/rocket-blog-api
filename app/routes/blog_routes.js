@@ -51,7 +51,7 @@ module.exports = function (app, db) {
     /*  
      *   PUT one blog; URL: /blog/id 
      */
-    app.put('/blog/:id', (req, res) => {
+  /*  app.put('/blog/:id', (req, res) => {
         
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };                
@@ -68,7 +68,7 @@ module.exports = function (app, db) {
         });
     });
 
-    
+    */
     /*  
      *   POST one blog; 
      *   URL: /addblog/

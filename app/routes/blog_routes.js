@@ -13,13 +13,11 @@ module.exports = function (app, db) {
         });
   });
     
-    app.post('/addblog', (req, res) => {
-
-        
-        const note = req.body;
+    app.post('/addblog', function(req, res) {
+            
         
         
-        db.collection('blog').insert(note, (err, result) => {
+        db.collection('blog').insert(req.body, (err, result) => {
             if (err) {
                 res.send({
                     'error': 'An error has occurred'

@@ -5,19 +5,12 @@ const app = express();
 const port = 8080;
 
 
-
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
+app.use(bodyParser.json());
 
 
 app.listen(process.env.PORT || 8080, () => {
-            console.log('We are live on ' + port);
+            console.log('Blog Rocket API is Live' + port);
         });
-
-
-console.log(" subiu no heroku ");
-console.log(process.env.MONGODB_URI);
 
 
 mongodb.MongoClient.connect(process.env.MONGODB_URI, (err, database) => {

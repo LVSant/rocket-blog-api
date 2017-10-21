@@ -14,7 +14,7 @@ app.listen(process.env.PORT || 8080, () => {
 
 
 mongodb.MongoClient.connect(process.env.MONGODB_URI, (err, database) => {
-    {
+    
         if (err) return console.log(err)
         require('./app/routes')(app, database);
         

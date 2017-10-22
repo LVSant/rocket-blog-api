@@ -5,7 +5,7 @@ var cfg = require("./config.js");
 var ExtractJwt = passportJWT.ExtractJwt;
 var Strategy = passportJWT.Strategy;
 var params = {
-    secretOrKey: cfg.jwtSecret
+    secretOrKey: process.env.JWTSECRET || cfg.jwtSecret 
     , jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
 };
 module.exports = function () {
@@ -27,7 +27,7 @@ module.exports = function () {
             return passport.initialize();
         }
         , authenticate: function () {
-            return passport.authenticate("jwt", cfg.jwtSession);
+            return passport.authenticate("jwt", cfg.jwtSession || false);
         }
     };
 };

@@ -1,6 +1,5 @@
 var mongodb = require('mongodb');
 var decoder = require('./tokendecode');
-
 var dec = new decoder();
 
 var ObjectID = mongodb.ObjectID;
@@ -56,22 +55,16 @@ module.exports = function (app, db) {
      *   PUT one user; URL: /user/id 
      */
     app.put('/user/:id', function (req, res) {
-        var token = req.get('Authorization');
-
-        console.log('token', token);
-
-        dec.decode(token);
         var id = req.params.id;
         var details = {
             '_id': new ObjectID(id)
         };
-        console.log('body ', req.body);
+        //console.log('body ', req.body);
 
         var user = {
             'name': req.body.name,
-            'password': req.body.password,
-            'admin': req.body.admin
-        }
+            'password': req.body.password
+        };
 
         db.collection('user').update(details, user, function (err, result) {
             if (err) {
@@ -98,8 +91,6 @@ module.exports = function (app, db) {
     app.post('/user', function (req, res) {
 
         console.log('User ', req.body);
-
-
 
         db.collection('user').insert(req.body, function (err, result) {
             if (err) {

@@ -2,6 +2,7 @@ var blogProtectedRoutes = require('./protected/blogProtectedRoutes');
 var blogOpenRoutes = require('./open/blogOpenRoutes');
 var userProtectedRoutes = require('./protected/userProtectedRoutes');
 var userOpenRoutes = require('./open/userOpenRoutes');
+var bcrypt = require('bcrypt');
 
 var jwt = require('jsonwebtoken');
 var config = require('../../config');
@@ -12,10 +13,7 @@ module.exports = function (app, db) {
      * Generate a token if a valid user is provided;
      */
     app.post('/auth', function (req, res) {
-        
-        console.log('post auth');
         db.collection('user').find({}).toArray(function (err, allUsers) {
-
             if (err)
                 throw err;
 
@@ -23,14 +21,12 @@ module.exports = function (app, db) {
                 var email = req.body.email;
                 var password = req.body.password;
                 var user = allUsers.find(function (u) {
-                    return u.email === email && u.password === password;
+                    return u.email === email && bcrypt.compareSync(u.password, password);
                 });
-                console.log('user: ', user);
                 if (user) {
                     var payload = {
                         id: user.id
                     };
-
                     var token = jwt.sign(payload, config.jwtSecret, {
                         expiresIn: 60 * 60 * 2 // 2h
                     });
@@ -70,7 +66,6 @@ module.exports = function (app, db) {
     app.use(function (req, res, next) {
         var token = req.get('Authorization');
         if (token) {
-            console.log('tokenDecode', token);
             jwt.verify(token, config.jwtSecret || process.env.JWTSECRET, function (err, decoded) {
                 if (err) {
                     return res.status(401).json({success: false, message: 'Failed to authenticate token'});

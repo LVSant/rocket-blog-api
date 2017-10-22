@@ -6,9 +6,6 @@ module.exports = function () {
     this.decode = function (token, req, res) {
         try {
             if (token) {
-                console.log('tokenDecode', token);
-
-
                 jwt.verify(token, config.jwtSecret, function (err, decoded) {
                     if (err) {
                         return res.json({success: false, message: 'Failed to authenticate token'});

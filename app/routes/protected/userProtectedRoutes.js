@@ -1,4 +1,5 @@
 var ObjectID = require('mongodb').ObjectID;
+var bcrypt = require('bcrypt');
 
 module.exports = function (app, db) {
     /*  
@@ -27,7 +28,6 @@ module.exports = function (app, db) {
         var details = {
             '_id': new ObjectID(id)
         };
-        //console.log('body ', req.body);
 
         var user = {
             'name': req.body.name,
@@ -57,17 +57,21 @@ module.exports = function (app, db) {
      *
      */
     app.post('/user', function (req, res) {
+        bcrypt.hash(req.body.password, 10, function (err, hash) {
+            if (err)
+                throw err;
+            
+            req.body.password = hash;
 
-        console.log('User ', req.body);
-
-        db.collection('user').insert(req.body, function (err, result) {
-            if (err) {
-                res.send({
-                    'error': 'An error has occurred'
-                });
-            } else {
-                res.send(result.ops[0]);
-            }
+            db.collection('user').insert(req.body, function (err, result) {
+                if (err) {
+                    res.send({
+                        'error': 'An error has occurred'
+                    });
+                } else {
+                    res.send(result.ops[0]);
+                }
+            });
         });
     });
 };

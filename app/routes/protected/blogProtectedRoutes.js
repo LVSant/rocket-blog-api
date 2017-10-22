@@ -27,7 +27,6 @@ module.exports = function (app, db) {
         var details = {
             '_id': new ObjectID(id)
         };
-        console.log('body ', req.body);
         var blog = {
             'title': req.body.title
             , 'text': req.body.text

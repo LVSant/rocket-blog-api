@@ -1,6 +1,5 @@
 var ObjectID = require('mongodb').ObjectID;
-var bcrypt = require('bcrypt');
-
+var controller = require('../../controller/userController');
 module.exports = function (app, db) {
     /*  
      *   DELETE one user; URL: /user/id 
@@ -24,54 +23,10 @@ module.exports = function (app, db) {
      *   PUT one user; URL: /user/id 
      */
     app.put('/user/:id', function (req, res) {
-        var id = req.params.id;
-        var details = {
-            '_id': new ObjectID(id)
-        };
-
-        var user = {
-            'name': req.body.name,
-            'password': req.body.password
-        };
-
-        db.collection('user').update(details, user, function (err, result) {
-            if (err) {
-                res.send({
-                    'error': 'An error has occurred'
-                });
-            } else {
-                res.send(result);
-            }
-        });
+      controller.edit(req, res, db);
     });
-    /*  
-     *   POST one user; 
-     *   URL: /user/
-     *   Cotent-Type: application/json
-     *   JSON Create Example:
-     *   {
-     *        "name": "userName",
-     *        "password": "hashPassword",
-     *        "isAdmin" : true or false
-     *   }
-     *
-     */
-    app.post('/user', function (req, res) {
-        bcrypt.hash(req.body.password, 10, function (err, hash) {
-            if (err)
-                throw err;
-            
-            req.body.password = hash;
 
-            db.collection('user').insert(req.body, function (err, result) {
-                if (err) {
-                    res.send({
-                        'error': 'An error has occurred'
-                    });
-                } else {
-                    res.send(result.ops[0]);
-                }
-            });
-        });
+    app.post('/user', function (req, res) {
+        controller.register(req, res, db);
     });
 };

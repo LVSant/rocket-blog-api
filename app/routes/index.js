@@ -2,8 +2,8 @@ var blogProtectedRoutes = require('./protected/blogProtectedRoutes');
 var blogOpenRoutes = require('./open/blogOpenRoutes');
 var userProtectedRoutes = require('./protected/userProtectedRoutes');
 var userOpenRoutes = require('./open/userOpenRoutes');
-var bcrypt = require('bcrypt');
-
+var utilConf = require('./util');
+var util = new utilConf();
 var jwt = require('jsonwebtoken');
 var config = require('../../config');
 
@@ -13,33 +13,7 @@ module.exports = function (app, db) {
      * Generate a token if a valid user is provided;
      */
     app.post('/auth', function (req, res) {
-        db.collection('user').find({}).toArray(function (err, allUsers) {
-            if (err)
-                throw err;
-
-            if (req.body.email && req.body.password) {
-                var email = req.body.email;
-                var password = req.body.password;
-                var user = allUsers.find(function (u) {
-                    return u.email === email && bcrypt.compareSync(u.password, password);
-                });
-                if (user) {
-                    var payload = {
-                        id: user.id
-                    };
-                    var token = jwt.sign(payload, config.jwtSecret, {
-                        expiresIn: 60 * 60 * 2 // 2h
-                    });
-                    res.json({
-                        success: true,
-                        token: token});
-                } else {
-                    res.sendStatus(401);
-                }
-            } else {
-                res.sendStatus(401);
-            }
-        });
+        util.authorization(req, res, db);
     });
 
     /*
@@ -61,7 +35,7 @@ module.exports = function (app, db) {
     /*
      * Authenticates the user based on his token.
      * If a invalid token is provided, save it to the next requisitions.
-     * All routes above this will require a valid token to work.
+     * All routes below this will require a valid token to work.
      */
     app.use(function (req, res, next) {
         var token = req.get('Authorization');

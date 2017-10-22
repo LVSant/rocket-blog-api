@@ -5,7 +5,9 @@ Using Node.js, Express, Mongoose, JWT
 
 ### Prerequisites
 
-Install dependencies
+Set $MONGODB_URI with your mongodb driver via the standard [MongoDB URI](http://docs.mlab.com/connecting/#connect-string)
+
+npm install
 
 ## Deployment
 

@@ -24,12 +24,18 @@
   },
   "homepage": "https://github.com/leonardoviveiros/blogcts#readme",
   "dependencies": {
+    "bcrypt": "^1.0.3",
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
+    "inspect": "0.0.2",
     "jsonwebtoken": "^8.1.0",
+    "jwt-simple": "^0.5.1",
     "mongodb": "^2.2.33",
     "mongoose": "^4.12.3",
-    "morgan": "^1.9.0"
+    "morgan": "^1.9.0",
+    "node-inspector": "^1.1.1",
+    "passport": "^0.4.0",
+    "passport-jwt": "^3.0.0"
   },
   "devDependencies": {
     "jasmine": "^2.8.0",

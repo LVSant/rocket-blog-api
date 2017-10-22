@@ -1,22 +1,23 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const mongodb = require('mongodb');
-const app = express();
-const port = 8080;
-
-
+var express = require('express');
+var bodyParser = require('body-parser');
+var app = express();
+var mongodb = require('mongodb');
+var mongoose = require('mongoose');
+var morgan = require('morgan');
+var jwt = require('jsonwebtoken');
+var config = require('./config');
+var user = require('./app/model/user');
+var auth = require("./auth.js")();
 app.use(bodyParser.json());
+app.use(auth.initialize());
+app.use(morgan('dev'));
+app.listen(process.env.PORT || 8080, function () {
+    console.log('Rocket Blog API is Live!');
+});
 
+mongodb.MongoClient.connect(config.database, function (err, database) {
+    if (err)
+        throw (err);
 
-app.listen(process.env.PORT || 8080, () => {
-            console.log('Blog Rocket API is Live ' + port);
-        });
-
-
-mongodb.MongoClient.connect(process.env.MONGODB_URI, (err, database) => {
-    
-        if (err) return console.log(err)
-        require('./app/routes')(app, database);
-        
-    })
-    console.log("Hello World");
+    require('./app/routes')(app, database);
+});

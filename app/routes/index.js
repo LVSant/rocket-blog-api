@@ -22,7 +22,7 @@ module.exports = function (app, db) {
                         id: user.id
                     };
 
-                    var token = jwt.sign(payload, config.jwtSecret || process.env.JWTSECRET, {
+                    var token = jwt.sign(payload, config.jwtSecret, {
                         expiresIn: 60 * 1 //1h
                     });
                     res.json({

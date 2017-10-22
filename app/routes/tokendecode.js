@@ -9,7 +9,7 @@ module.exports = function () {
                 console.log('tokenDecode', token);
 
 
-                jwt.verify(token, config.jwtSecret || process.env.JWTSECRET, function (err, decoded) {
+                jwt.verify(token, config.jwtSecret, function (err, decoded) {
                     if (err) {
                         return res.json({success: false, message: 'Failed to authenticate token'});
                     } else {

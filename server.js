@@ -15,7 +15,7 @@ app.listen(process.env.PORT || 8080, function () {
     console.log('Rocket Blog API is Live!');
 });
 
-mongodb.MongoClient.connect(config.database || process.env.MONGODB_URI, function (err, database) {
+mongodb.MongoClient.connect(config.database, function (err, database) {
     if (err)
         throw (err);
 

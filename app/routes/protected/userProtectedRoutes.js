@@ -1,38 +1,6 @@
-var mongodb = require('mongodb');
-var decoder = require('./tokendecode');
-var dec = new decoder();
+var ObjectID = require('mongodb').ObjectID;
 
-var ObjectID = mongodb.ObjectID;
 module.exports = function (app, db) {
-    /*  
-     *   GET one user; URL: /user/id 
-     */
-    app.get('/user/:id', function (req, res) {
-        var id = req.params.id;
-        var details = {
-            '_id': new ObjectID(id)
-        };
-
-        db.collection('user').findOne(details, function (err, item) {
-            if (err) {
-                res.send({
-                    'error': 'Could not find user!'
-                });
-            } else {
-                res.send(item);
-            }
-        });
-    });
-    /*  
-     *   GET all users; URL: /user/ 
-     */
-    app.get('/user', function (req, res) {
-        db.collection('user').find({}).toArray(function (err, users) {
-            if (err)
-                throw error;
-            res.send(users);
-        });
-    });
     /*  
      *   DELETE one user; URL: /user/id 
      */
@@ -102,5 +70,4 @@ module.exports = function (app, db) {
             }
         });
     });
-
 };

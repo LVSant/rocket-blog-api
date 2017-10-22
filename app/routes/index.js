@@ -1,10 +1,19 @@
-var blogRoutes = require('./blog_routes');
-var userRoutes = require('./user_routes');
+var blogProtectedRoutes = require('./protected/blogProtectedRoutes');
+var blogOpenRoutes = require('./open/blogOpenRoutes');
+var userProtectedRoutes = require('./protected/userProtectedRoutes');
+var userOpenRoutes = require('./open/userOpenRoutes');
+
 var jwt = require('jsonwebtoken');
 var config = require('../../config');
+
 module.exports = function (app, db) {
 
-    app.post("/token", function (req, res) {
+    /*
+     * Generate a token if a valid user is provided;
+     */
+    app.post('/auth', function (req, res) {
+        
+        console.log('post auth');
         db.collection('user').find({}).toArray(function (err, allUsers) {
 
             if (err)
@@ -23,7 +32,7 @@ module.exports = function (app, db) {
                     };
 
                     var token = jwt.sign(payload, config.jwtSecret, {
-                        expiresIn: 60 * 60 * 24 // 24h
+                        expiresIn: 60 * 60 * 2 // 2h
                     });
                     res.json({
                         success: true,
@@ -37,6 +46,27 @@ module.exports = function (app, db) {
         });
     });
 
+    /*
+     * Headers necessary for browser.
+     */
+    app.all('*', function (req, res, next) {
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'Content-Type');
+        next();
+    });
+
+    /*
+     * Here comes the open routes, that don't need authenticaion
+     */
+    blogOpenRoutes(app, db);
+    userOpenRoutes(app, db);
+
+    /*
+     * Authenticates the user based on his token.
+     * If a invalid token is provided, save it to the next requisitions.
+     * All routes above this will require a valid token to work.
+     */
     app.use(function (req, res, next) {
         var token = req.get('Authorization');
         if (token) {
@@ -50,16 +80,13 @@ module.exports = function (app, db) {
                 }
             });
         } else {
-            return res.status(403).send({success: false, message: 'Voce nao informou o token.'});
+            return res.status(403).send({success: false, message: 'Token not found.'});
         }
     });
 
-    app.all('*', function (req, res, next) {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
-        res.header('Access-Control-Allow-Headers', 'Content-Type');
-        next();
-    });
-    blogRoutes(app, db);
-    userRoutes(app, db);
+    /*
+     * Here comes the routes that need authentication
+     */
+    blogProtectedRoutes(app, db);
+    userProtectedRoutes(app, db);
 };

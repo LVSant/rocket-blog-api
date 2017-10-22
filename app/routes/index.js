@@ -23,7 +23,7 @@ module.exports = function (app, db) {
                     };
 
                     var token = jwt.sign(payload, config.jwtSecret, {
-                        expiresIn: 60 * 1 //1h
+                        expiresIn: 60 * 60 * 24 // 24h
                     });
                     res.json({
                         success: true,
@@ -50,7 +50,7 @@ module.exports = function (app, db) {
                 }
             });
         } else {
-            return res.status(403).send({success: false, message: 'No token provided.'});
+            return res.status(403).send({success: false, message: 'Voce nao informou o token.'});
         }
     });
 

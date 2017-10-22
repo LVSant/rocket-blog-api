@@ -5,8 +5,6 @@ var jwt = require('jsonwebtoken');
 
 module.exports = function () {
     this.authorization = function (req, res, db) {
-        console.log('req.body.email', req.body.email);
-        console.log('req.body.password', req.body.password);
 
         if (req.body.email && req.body.password) {
             db.collection('user').find({email: req.body.email}).toArray(function (err, users) {

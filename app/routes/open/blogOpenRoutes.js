@@ -1,32 +1,12 @@
-var ObjectID = require('mongodb').ObjectID;
+var controller = require('../../controller/userController');
 
 module.exports = function (app, db) {
-    /*  
-     *   GET one blog; URL: /blog/id 
-     */
+
     app.get('/blog/:id', function (req, res) {
-        var id = req.params.id;
-        var details = {
-            '_id': new ObjectID(id)
-        };
-        db.collection('blog').findOne(details, function (err, item) {
-            if (err) {
-                res.send({
-                    'error': 'An error has occurred'
-                });
-            } else {
-                res.send(item);
-            }
-        });
+        controller.findUserById(req, res, db);
     });
-    /*  
-     *   GET all blogs; URL: /blog/ 
-     */
+
     app.get('/blog', function (req, res) {
-        db.collection('blog').find({}).toArray(function (err, blogs) {
-            if (err)
-                throw err;
-            res.send(blogs);
-        });
+        controller.findAll(req, res, db);
     });
 };

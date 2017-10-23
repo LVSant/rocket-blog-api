@@ -6,35 +6,30 @@ var utilConf = require('./util');
 var util = new utilConf();
 var jwt = require('jsonwebtoken');
 var config = require('../../config');
+var cors = require('cors');
+
 
 module.exports = function (app, db) {
 
-    /*
-     * Headers necessary for browser.
-     */
-    app.all('*', function (req, res, next) {
-        if (req.method === 'OPTIONS') {
-            console.log('!OPTIONS');
-            var headers = {};
-            // IE8 does not allow domains to be specified, just the *
-            // headers["Access-Control-Allow-Origin"] = req.headers.origin;
-            headers["Access-Control-Allow-Origin"] = "*";
-            headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS";
-            headers["Access-Control-Allow-Credentials"] = false;
-            headers["Access-Control-Max-Age"] = '86400'; // 24 hours
-            headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept";
-            res.writeHead(200, headers);
-            res.end();
-        }
-        next();
-    });
-
+    app.use(cors());
 
     /*
      * Generate a token if a valid user is provided;
      */
     app.post('/auth', function (req, res) {
         util.authorization(req, res, db);
+    });
+
+    /*
+     * Headers necessary for browser.
+     */
+    app.all('*', function (req, res, next) {
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'Content-Type', 'Authorization');
+
+        next();
+        res.send();
     });
 
     /*

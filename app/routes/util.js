@@ -34,4 +34,24 @@ module.exports = function () {
             res.sendStatus(401);
         }
     };
+
+    this.decode = function (token, req, res) {
+        try {
+            if (token) {
+                jwt.verify(token, config.jwtSecret, function (err, decoded) {
+                    if (err) {
+                        return res.json({success: false, message: 'Failed to authenticate token'});
+                    } else {
+                        req.decoded = decoded;
+                        console.log(decoded);
+                        next();
+                    }
+                });
+            } else {
+                return res.status(403).send({success: false, message: 'No token provided.'});
+            }
+        } catch (err) {
+            return 401;
+        }
+    };
 };

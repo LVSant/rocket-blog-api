@@ -16,7 +16,7 @@ module.exports = function (app, db) {
     /*
      * Generate a token if a valid user is provided;
      */
-    app.post('/auth', function (req, res) {
+    app.post('/admin/auth', function (req, res) {
         util.authorization(req, res, db);
     });
 
@@ -29,7 +29,6 @@ module.exports = function (app, db) {
         res.header('Access-Control-Allow-Headers', 'Content-Type', 'Authorization');
 
         next();
-        res.send();
     });
 
     /*

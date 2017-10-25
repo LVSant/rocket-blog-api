@@ -29,4 +29,6 @@ module.exports = function (app, db) {
             res.send(users);
         });
     });
+    
+    //app.get('/me', )
 };

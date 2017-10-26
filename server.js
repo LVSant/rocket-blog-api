@@ -4,10 +4,9 @@ var app = express();
 var mongodb = require('mongodb');
 var mongoose = require('mongoose');
 var morgan = require('morgan');
-var jwt = require('jsonwebtoken');
 var config = require('./config');
-var user = require('./app/model/user');
 var auth = require("./auth.js")();
+
 app.use(bodyParser.json());
 app.use(auth.initialize());
 app.use(morgan('dev'));

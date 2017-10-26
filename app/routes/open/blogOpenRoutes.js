@@ -1,9 +1,9 @@
-var controller = require('../../controller/userController');
+var controller = require('../../controller/blogController');
 
 module.exports = function (app, db) {
 
     app.get('/post/:id', function (req, res) {
-        controller.findUserById(req, res, db);
+        controller.findBlogById(req, res, db);
     });
 
     app.get('/post', function (req, res) {

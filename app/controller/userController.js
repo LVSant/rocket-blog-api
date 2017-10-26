@@ -16,16 +16,30 @@ var util = new utilConf();
  *  } 
  */
 exports.register = function (req, res, db) {
-    var hash = bcrypt.hashSync(req.body.password, 10);
-    req.body.password = hash;
-    db.collection('user').insert(req.body, function (err, result) {
-        if (err) {
-            res.send({
-                'error': 'An error has occurred'
+    util.decode(req, res);
+    var loggedUserId = req.decoded.id;
+
+    this.getAllAdmins(db, function (adminUsers) {
+
+        var isUserAdmin = adminUsers.find(function (u) {
+            return u._id.equals(loggedUserId);
+        });
+
+        console.log('isUserAdmin', isUserAdmin);
+        if (isUserAdmin) {
+            var hash = bcrypt.hashSync(req.body.password, 10);
+            req.body.password = hash;
+            db.collection('user').insert(req.body, function (err, result) {
+                if (err) {
+                    res.send({
+                        'error': 'An error has occurred'
+                    });
+                } else {
+                    res.send(result.ops[0].id);
+                }
             });
-        } else {
-            res.send(result.ops[0]);
-        }
+        } else
+            res.sendStatus(403);
     });
 };
 
@@ -67,7 +81,9 @@ exports.edit = function (req, res, db) {
     var hashpasswd = bcrypt.hashSync(req.body.password, 10);
     var user = {
         'email': req.body.email,
-        'password': hashpasswd
+        'password': hashpasswd,
+        'name': req.body.name,
+        'role': req.body.role
     };
 
     db.collection('user').update(details, user, function (err, result) {
@@ -98,7 +114,7 @@ exports.findUserById = function (req, res, db) {
     var details = {
         '_id': new ObjectID(id)
     };
-    db.collection('blog').findOne(details, function (err, item) {
+    db.collection('user').findOne(details, function (err, item) {
         if (err) {
             res.send({
                 'error': 'An error has occurred'
@@ -113,9 +129,17 @@ exports.findUserById = function (req, res, db) {
  *   GET all blogs; URL: /blog/ 
  */
 exports.findAll = function (req, res, db) {
-    db.collection('blog').find({}).toArray(function (err, blogs) {
+    db.collection('user').find({}).toArray(function (err, blogs) {
         if (err)
             throw err;
         res.send(blogs);
+    });
+};
+
+exports.getAllAdmins = function (db, callback) {
+    db.collection('user').find({role: 'admin'}).toArray(function (err, admins) {
+        if (err)
+            throw err;
+        callback(admins);
     });
 };

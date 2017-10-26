@@ -1,11 +1,11 @@
 var config = require('../../config');
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
-
+//var jwt_decode = require('jwt-decode');
 
 module.exports = function () {
     this.authorization = function (req, res, db) {
-        //console.log(req);
+
         if (req.body.email && req.body.password) {
             db.collection('user').find({email: req.body.email}).toArray(function (err, users) {
                 if (err)
@@ -18,7 +18,7 @@ module.exports = function () {
                 });
                 if (user) {
                     var payload = {
-                        id: user.id
+                        id: user._id
                     };
                     var token = jwt.sign(payload, config.jwtSecret, {
                         expiresIn: 60 * 60 * 2//2h
@@ -35,15 +35,16 @@ module.exports = function () {
         }
     };
 
-    this.decode = function (token, req, res) {
+    this.decode = function (req, res) {
         try {
+            var token = req.get('Authorization');
             if (token) {
                 jwt.verify(token, config.jwtSecret, function (err, decoded) {
                     if (err) {
                         return res.json({success: false, message: 'Failed to authenticate token'});
                     } else {
                         req.decoded = decoded;
-                        console.log(decoded);
+                        console.log(req.decoded);
                         next();
                     }
                 });

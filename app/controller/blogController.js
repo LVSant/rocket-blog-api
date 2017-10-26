@@ -1,7 +1,8 @@
 var ObjectID = require('mongodb').ObjectID;
-
-/*  
- *   POST one blog; 
+var utilConf = require('../routes/util');
+var util = new utilConf();
+/*
+ *   POST one blog;
  *   URL: /blog/
  *   Cotent-Type: application/json
  *   JSON Create Example:
@@ -9,7 +10,7 @@ var ObjectID = require('mongodb').ObjectID;
  *	"title": "Post Title",
  *	"titleurl": "title-url-friendly",
  *	"body": "html content",
- *  } 
+ *  }
  */
 exports.create = function (req, res, db) {
 
@@ -26,8 +27,8 @@ exports.create = function (req, res, db) {
     });
 };
 
-/*  
- *   DELETE one blog; URL: /blog/id 
+/*
+ *   DELETE one blog; URL: /blog/id
  */
 exports.delete = function (req, res, db) {
     var id = req.params.id;
@@ -45,8 +46,8 @@ exports.delete = function (req, res, db) {
     });
 };
 
-/*  
- *   PUT one blog; URL: /blog/id 
+/*
+ *   PUT one blog; URL: /blog/id
  */
 exports.edit = function (req, res, db) {
     var id = req.params.id;
@@ -70,8 +71,8 @@ exports.edit = function (req, res, db) {
     });
 };
 
-/*  
- *   GET one blog; URL: /blog/id 
+/*
+ *   GET one blog; URL: /blog/id
  */
 exports.findBlogById = function (req, res, db) {
     var id = req.params.id;
@@ -89,10 +90,14 @@ exports.findBlogById = function (req, res, db) {
     });
 };
 
-/*  
- *   GET all blogs; URL: /blog/ 
+/*
+ *   GET all blogs; URL: /blog/
  */
 exports.findAll = function (req, res, db) {
+    util.decode(req, res);
+    var userId = req.decoded.id;
+    console.log('userId', userId);
+
     db.collection('blog').find({}).toArray(function (err, blogs) {
         if (err)
             throw err;

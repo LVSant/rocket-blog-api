@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "start": "node server.js",
+    "start": "node config.js",
     "test": "jasmine"
   },
   "author": "leonardo viveiros",
@@ -30,6 +30,7 @@
     "express": "^4.16.2",
     "inspect": "0.0.2",
     "jsonwebtoken": "^8.1.0",
+    "jwt-decode": "^2.2.0",
     "jwt-simple": "^0.5.1",
     "mongodb": "^2.2.33",
     "mongoose": "^4.12.3",
@@ -40,6 +41,7 @@
   },
   "devDependencies": {
     "jasmine": "^2.8.0",
+    "karma": "^1.7.1",
     "nodemon": "^1.12.1"
   }
 }

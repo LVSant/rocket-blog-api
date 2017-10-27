@@ -101,18 +101,18 @@ exports.getAllBlogResume = function (req, res, db) {
     db.collection('blog').find({}).toArray(function (err, blogs) {
         if (err)
             throw err;
-        
-        /*res.send({
-            "id": blogs.id,
-            "titleUrl": blogs.titleUrl,
-            "title": blogs.title,
-            "img": blogs.img,
-            "resumeContent": blogs.resumeContent,
-            "category": blogs.category,
-            "date": blogs.creationDate,
-            "author": blogs.author
-        });*/
-        res.send(blogs);
+        var resumeBlog = blogs.map(function (blog) {
+            return {"id": blog["id"],
+                "titleUrl": blog["titleUrl"],
+                "title": blog["title"],
+                "img": blog["img"],
+                "resumeContent": blog["resumeContent"],
+                "category": blog["category"],
+                "date": blog["creationDate"],
+                "author": blog["author"]};
+        });
+
+        res.send(resumeBlog);
     });
 };
 

@@ -174,15 +174,18 @@ exports.getMe = function (req, res, db) {
     };
     db.collection('user').findOne(details, function (err, user) {
         if (err) {
-            res.send(err);
+            throw err;
         } else {
-            console.log(user.name);
-            res.send({
-                "id": user._id, 
-                "name": user.name, 
-                "email": user.email, 
-                "role": user.role 
-            });
+            if (user) {
+                res.send({
+                    "id": user["_id"],
+                    "name": user["name"],
+                    "email": user["email"],
+                    "role": user["role "]
+                });
+            } else {
+                res.status(403).send({"message":"User not found"});
+            }
         }
     });
 

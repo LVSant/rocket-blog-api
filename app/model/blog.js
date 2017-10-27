@@ -10,6 +10,7 @@ var Blog = new Schema({
     resumeContent: String,
     date: Date,
     author: String,
+    category:String,
     creationDate: {type: Date, default: Date.now}
 });
 

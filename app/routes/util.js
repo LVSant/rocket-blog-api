@@ -55,4 +55,12 @@ module.exports = function () {
             return 401;
         }
     };
+
+    this.getAdminUser = function (req, res) {
+        try {
+
+        } catch (err) {
+            return 401;
+        }
+    };
 };

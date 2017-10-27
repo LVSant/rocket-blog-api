@@ -1,4 +1,6 @@
 var ObjectID = require('mongodb').ObjectID;
+var controller = require('../../controller/userController');
+
 module.exports = function (app, db) {
     /*  
      *   GET one user; URL: /user/id 
@@ -30,5 +32,4 @@ module.exports = function (app, db) {
         });
     });
     
-    //app.get('/me', )
 };

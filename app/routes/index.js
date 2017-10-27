@@ -1,7 +1,6 @@
 var blogProtectedRoutes = require('./protected/blogProtectedRoutes');
 var blogOpenRoutes = require('./open/blogOpenRoutes');
 var userProtectedRoutes = require('./protected/userProtectedRoutes');
-var userOpenRoutes = require('./open/userOpenRoutes');
 var utilConf = require('./util');
 var util = new utilConf();
 var jwt = require('jsonwebtoken');
@@ -35,7 +34,6 @@ module.exports = function (app, db) {
      * Here comes the open routes, that don't need authenticaion
      */
     blogOpenRoutes(app, db);
-    userOpenRoutes(app, db);
 
     /*
      * Authenticates the user based on his token.

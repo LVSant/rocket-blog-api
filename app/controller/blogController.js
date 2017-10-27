@@ -93,7 +93,7 @@ exports.findBlogById = function (req, res, db) {
 /*
  *   GET all blogs; URL: /blog/
  */
-exports.findAll = function (req, res, db) {
+exports.getAllBlogResume = function (req, res, db) {
     util.decode(req, res);
     var userId = req.decoded.id;
     console.log('userId', userId);
@@ -101,6 +101,17 @@ exports.findAll = function (req, res, db) {
     db.collection('blog').find({}).toArray(function (err, blogs) {
         if (err)
             throw err;
+        
+        /*res.send({
+            "id": blogs.id,
+            "titleUrl": blogs.titleUrl,
+            "title": blogs.title,
+            "img": blogs.img,
+            "resumeContent": blogs.resumeContent,
+            "category": blogs.category,
+            "date": blogs.creationDate,
+            "author": blogs.author
+        });*/
         res.send(blogs);
     });
 };

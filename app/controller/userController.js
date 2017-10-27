@@ -67,7 +67,7 @@ exports.delete = function (req, res, db) {
                 }
             });
         } else
-            res.send({'message': 'You aren\'t an Admin'}).status(403);
+            res.status(403).send({'message': 'You aren\'t an Admin'});
     });
 };
 

@@ -16,4 +16,17 @@ module.exports = function (app, db) {
     app.get('/admin/me', function (req, res) {
         controller.getMe(req, res, db);
     });
+    /*  
+     *   GET one user; URL: /user/id 
+     */
+    app.get('/admin/user/:id', function (req, res) {
+        controller.findUserById(req, res, db);
+    });
+    /*  
+     *   GET all users; URL: /user/ 
+     */
+    app.get('/admin/user', function (req, res) {
+        controller.findAll(req, res, db);
+    });
+
 };

@@ -67,7 +67,7 @@ exports.delete = function (req, res, db) {
                 }
             });
         } else
-            res.sendStatus(403);
+            res.send('You aren\'t an Admin').status(403);
     });
 };
 
@@ -184,7 +184,7 @@ exports.getMe = function (req, res, db) {
                     "role": user["role "]
                 });
             } else {
-                res.status(403).send({"message":"User not found"});
+                res.status(403).send({"message": "User not found"});
             }
         }
     });

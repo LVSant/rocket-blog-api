@@ -36,7 +36,7 @@ module.exports = function () {
         }
     };
 
-    this.decode = function (req, res) {
+    this.decode = function (req, res, cb) {
         try {
             var token = req.get('Authorization');
             if (token) {
@@ -45,15 +45,14 @@ module.exports = function () {
                         return res.json({success: false, message: 'Failed to authenticate token.'});
                     } else {
                         req.decoded = decoded;
-                        console.log(req.decoded);
-                        next();
+                        cb();
                     }
                 });
             } else {
                 return res.status(403).send({message: 'No token provided.'});
             }
         } catch (err) {
-            return res.status(403).send({message: 'An error ocurred while decoding the token.'});
+            return res.status(403).send(err);
         }
     };
 
@@ -86,15 +85,15 @@ module.exports = function () {
                     console.log('deleting');
                     db.dropDatabase();
                     console.log('creating user superadmin');
-                    
+
                     var hash = bcrypt.hashSync(config.userAdminPassword, 10);
-                    
+
                     var user = {
                         "name": "Snoopy",
                         "email": "ab",
                         "password": hash,
                         "role": "superadmin",
-                        "date" : new Date() 
+                        "date": new Date()
                     };
 
                     db.collection('User').insert(user);

@@ -167,27 +167,29 @@ exports.isUserAdmin = function (db, userId, callback) {
 };
 
 exports.getMe = function (req, res, db) {
-    util.decode(req, res);
-
-    var loggedUserId = req.decoded.id;
-    var details = {
-        '_id': new ObjectID(loggedUserId)
-    };
-    db.collection('user').findOne(details, function (err, user) {
-        if (err) {
-            throw err;
-        } else {
-            if (user) {
-                res.send({
-                    "id": user["_id"],
-                    "name": user["name"],
-                    "email": user["email"],
-                    "role": user["role "]
-                });
+    util.decode(req, res, function () {
+        var loggedUserId = req.decoded.id;
+        console.log('loggedUserId', loggedUserId);
+        var details = {
+            '_id': new ObjectID(loggedUserId)
+        };
+        db.collection('User').findOne(details, function (err, user) {
+            if (err) {
+                throw err;
             } else {
-                res.status(403).send({"message": "User not found"});
+                console.log('user', user);
+                if (user) {
+                    res.send({
+                        "id": user["_id"],
+                        "name": user["name"],
+                        "email": user["email"],
+                        "role": user["role "]
+                    });
+                } else {
+                    res.status(403).send({"message": "User not found"});
+                }
             }
-        }
-    });
+        });
 
+    });
 };

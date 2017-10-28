@@ -27,8 +27,6 @@ app.listen(process.env.PORT || 8080, function () {
     connect(function (db) {
         db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-        console.log('setup');
-        
         util.setupEnvironment(db);
         require('./app/routes')(app, db);
     });

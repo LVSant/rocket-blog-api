@@ -12,6 +12,13 @@ module.exports = function (app, db) {
 
     app.use(cors());
 
+    app.get('/', function (req, res) {
+
+        res.send('<html>\n\
+                    <h2>Rocket Blog API</h2><br><br>\n\
+                 </html>');
+    });
+
     /*
      * Generate a token if a valid user is provided;
      */
@@ -19,16 +26,16 @@ module.exports = function (app, db) {
         util.authorization(req, res, db);
     });
 
-    /*
-     * Headers necessary for browser.
-     */
-    app.all('*', function (req, res, next) {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
-        res.header('Access-Control-Allow-Headers', 'Content-Type', 'Authorization');
-
-        next();
-    });
+//    /*
+//     * Headers necessary for browser.
+//     */
+//    app.all('*', function (req, res, next) {
+//        res.header('Access-Control-Allow-Origin', '*');
+//        res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+//        res.header('Access-Control-Allow-Headers', 'Content-Type', 'Authorization');
+//
+//        next();
+//    });
 
     /*
      * Here comes the open routes, that don't need authenticaion

@@ -1,13 +1,14 @@
 var config = require('../../config');
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
-//var jwt_decode = require('jwt-decode');
+var userSchema = require('../model/user');
+var mongoose = require('mongoose');
 
 module.exports = function () {
     this.authorization = function (req, res, db) {
 
         if (req.body.email && req.body.password) {
-            db.collection('user').find({email: req.body.email}).toArray(function (err, users) {
+            db.collection('User').find({email: req.body.email}).toArray(function (err, users) {
                 if (err)
                     throw err;
 
@@ -31,7 +32,7 @@ module.exports = function () {
                 }
             });
         } else {
-            res.sendStatus(401);
+            res.status(401).send({message: 'Invalid User or Password'});
         }
     };
 
@@ -41,7 +42,7 @@ module.exports = function () {
             if (token) {
                 jwt.verify(token, config.jwtSecret, function (err, decoded) {
                     if (err) {
-                        return res.json({success: false, message: 'Failed to authenticate token'});
+                        return res.json({success: false, message: 'Failed to authenticate token.'});
                     } else {
                         req.decoded = decoded;
                         console.log(req.decoded);
@@ -49,10 +50,10 @@ module.exports = function () {
                     }
                 });
             } else {
-                return res.status(403).send({success: false, message: 'No token provided.'});
+                return res.status(403).send({message: 'No token provided.'});
             }
         } catch (err) {
-            return 401;
+            return res.status(403).send({message: 'An error ocurred while decoding the token.'});
         }
     };
 
@@ -62,5 +63,43 @@ module.exports = function () {
         } catch (err) {
             return 401;
         }
+    };
+
+    this.isDevEnvironment = function () {
+        try {
+            console.log(process.argv);
+            return process.argv[3] === 'dev';
+        } catch (err) {
+            return true;
+        }
+    };
+
+    this.setupEnvironment = function (db) {
+        db.collection('User').findOne({role: 'superadmin'}, function (err, superAdminExists) {
+            if (err) {
+                throw err;
+            } else {
+                if (superAdminExists) {
+                    console.log('superAdmin found');
+                } else {
+                    console.log('superAdmin not found');
+                    console.log('deleting');
+                    db.dropDatabase();
+                    console.log('creating user superadmin');
+                    
+                    var hash = bcrypt.hashSync(config.userAdminPassword, 10);
+                    
+                    var user = {
+                        "name": "Snoopy",
+                        "email": "ab",
+                        "password": hash,
+                        "role": "superadmin",
+                        "date" : new Date() 
+                    };
+
+                    db.collection('User').insert(user);
+                }
+            }
+        });
     };
 };

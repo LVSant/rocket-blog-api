@@ -4,7 +4,7 @@
   "description": "Blog for UNICAMP-FT lecture of 'Science, Technology and Society'",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon server.js",
+    "dev": "nodemon server.js --env dev",
     "start": "node server.js",
     "test": "jasmine"
   },

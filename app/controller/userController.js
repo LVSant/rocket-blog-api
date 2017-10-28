@@ -24,7 +24,8 @@ exports.register = function (req, res, db) {
             var hash = bcrypt.hashSync(req.body.password, 10);
             req.body.password = hash;
             db.collection('user').insert(req.body, function (err, result) {
-                if (err) {
+                if (err)
+                {
                     res.send({
                         'error': 'An error has occurred'
                     });
@@ -33,7 +34,7 @@ exports.register = function (req, res, db) {
                 }
             });
         } else
-            res.sendStatus(403);
+            res.status(403).send({'message': 'You aren\'t an Admin'});
     });
 };
 
@@ -103,7 +104,7 @@ exports.edit = function (req, res, db) {
                 }
             });
         } else {
-            res.sendStatus(403);
+            res.status(403).send({'message': 'You aren\'t an Admin'});
         }
     });
 };

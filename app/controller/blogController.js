@@ -1,6 +1,5 @@
 var ObjectID = require('mongodb').ObjectID;
-var utilConf = require('../routes/util');
-var util = new utilConf();
+
 /*
  *   POST one blog;
  *   URL: /blog/
@@ -12,19 +11,40 @@ var util = new utilConf();
  *	"body": "html content",
  *  }
  */
+function validateBlog(req) {
+    try {
+        var newBlog = {
+            "title": req.body.title,
+            "img": req.body.img,
+            "resumeContent": req.body.resumeContent,
+            "category": req.body.category,
+            "date": new Date(),
+            "author": req.body.author
+        };
+        console.log('new blog:', newBlog);
+        return newBlog;
+    } catch (e) {
+        return false;
+    }
+}
 exports.create = function (req, res, db) {
-
-    tokenize(req, res);
-
-    db.collection('blog').insert(req.body, function (err, result) {
-        if (err) {
-            res.send({
-                'error': 'An error has occurred'
-            });
-        } else {
-            res.send(result.ops[0]);
-        }
-    });
+   // tokenize(req, res);
+    
+    var validBlog = validateBlog(req);
+    if (validBlog) {
+        db.collection('blog').insert(validBlog, function (err, result) {
+            if (err) {
+                res.send({
+                    success: false,
+                    message: 'An error has occurred trying to insert a new post'
+                });
+            } else {
+                res.status(200).send(result.ops[0]);
+            }
+        });
+    } else {
+        res.status(400).send({success: false, message: 'Bad format for a new post'});
+    }
 };
 
 /*
@@ -94,9 +114,6 @@ exports.findBlogById = function (req, res, db) {
  *   GET all blogs; URL: /blog/
  */
 exports.getAllBlogResume = function (req, res, db) {
-    util.decode(req, res);
-    var userId = req.decoded.id;
-    console.log('userId', userId);
 
     db.collection('blog').find({}).toArray(function (err, blogs) {
         if (err)
@@ -108,9 +125,10 @@ exports.getAllBlogResume = function (req, res, db) {
                 "img": blog["img"],
                 "resumeContent": blog["resumeContent"],
                 "category": blog["category"],
-                "date": blog["creationDate"],
+                "date": blog["date"],
                 "author": blog["author"]};
         });
+        console.log()
 
         res.send(resumeBlog);
     });

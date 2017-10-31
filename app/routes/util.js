@@ -52,7 +52,7 @@ module.exports = function () {
                 return res.status(403).send({message: 'No token provided.'});
             }
         } catch (err) {
-            return res.status(403).send(err);
+            return res.status(403).send('Error trying to decode token. ' + err);
         }
     };
 

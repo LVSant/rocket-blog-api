@@ -76,36 +76,38 @@ exports.delete = function (req, res, db) {
  *   PUT one user; URL: /user/id 
  */
 exports.edit = function (req, res, db) {
-    util.decode(req, res);
-    var loggedUserId = req.decoded.id;
+        
+    util.decode(req, res, function () {
+        var loggedUserId = req.decoded.id;
 
-    this.isUserAdmin(db, loggedUserId, function (userAdmin) {
-        var id = req.params.id;
-        var details = {
-            '_id': new ObjectID(id)
-        };
+        this.isUserAdmin(db, loggedUserId, function (userAdmin) {
+            var id = req.params.id;
+            var details = {
+                '_id': new ObjectID(id)
+            };
 
-        var hashpasswd = bcrypt.hashSync(req.body.password, 10);
-        var user = {
-            'email': req.body.email,
-            'password': hashpasswd,
-            'name': req.body.name,
-            'role': req.body.role
-        };
+            var hashpasswd = bcrypt.hashSync(req.body.password, 10);
+            var user = {
+                'email': req.body.email,
+                'password': hashpasswd,
+                'name': req.body.name,
+                'role': req.body.role
+            };
 
-        if (userAdmin || id === loggedUserId) {
-            db.collection('User').update(details, user, function (err, result) {
-                if (err) {
-                    res.send({
-                        'error': 'An error has occurred'
-                    });
-                } else {
-                    util.authorization(req, res, db);
-                }
-            });
-        } else {
-            res.status(403).send({'message': 'You aren\'t an Admin'});
-        }
+            if (userAdmin || id === loggedUserId) {
+                db.collection('User').update(details, user, function (err, result) {
+                    if (err) {
+                        res.send({
+                            'error': 'An error has occurred'
+                        });
+                    } else {
+                        util.authorization(req, res, db);
+                    }
+                });
+            } else {
+                res.status(403).send({'message': 'You aren\'t an Admin'});
+            }
+        });
     });
 };
 

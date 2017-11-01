@@ -39,11 +39,14 @@ module.exports = function () {
     this.decode = function (req, res, cb) {
         try {
             var token = req.get('Authorization');
+            console.log('trying to decode');
             if (token) {
+                console.log('valid token');
                 jwt.verify(token, config.jwtSecret, function (err, decoded) {
                     if (err) {
                         return res.json({success: false, message: 'Failed to authenticate token.'});
                     } else {
+                        console.log('decoded');
                         req.decoded = decoded;
                         cb();
                     }

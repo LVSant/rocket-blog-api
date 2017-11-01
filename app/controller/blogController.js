@@ -1,4 +1,6 @@
 var ObjectID = require('mongodb').ObjectID;
+var utilConf = require('../routes/util');
+var util = new utilConf();
 
 /*
  *   POST one blog;
@@ -17,6 +19,7 @@ function validateBlog(req) {
             "title": req.body.title,
             "img": req.body.img,
             "resumeContent": req.body.resumeContent,
+            "content":req.body.content,
             "category": req.body.category,
             "date": new Date(),
             "author": req.body.author
@@ -28,8 +31,8 @@ function validateBlog(req) {
     }
 }
 exports.create = function (req, res, db) {
-   // tokenize(req, res);
-    
+    // tokenize(req, res);
+
     var validBlog = validateBlog(req);
     if (validBlog) {
         db.collection('blog').insert(validBlog, function (err, result) {
@@ -119,7 +122,7 @@ exports.getAllBlogResume = function (req, res, db) {
         if (err)
             throw err;
         var resumeBlog = blogs.map(function (blog) {
-            return {"id": blog["id"],
+            return {
                 "titleUrl": blog["titleUrl"],
                 "title": blog["title"],
                 "img": blog["img"],
@@ -128,9 +131,29 @@ exports.getAllBlogResume = function (req, res, db) {
                 "date": blog["date"],
                 "author": blog["author"]};
         });
-        console.log()
 
         res.send(resumeBlog);
+    });
+};
+
+exports.findBlogAdmin = function (req, res, db) {
+    util.decode(req, res, function () {
+        db.collection('blog').find({}).toArray(function (err, blogs) {
+            if (err)
+                throw err;
+            var resumeBlog = blogs.map(function (blog) {
+                return {"id": blog["_id"],
+                    "titleUrl": blog["titleUrl"],
+                    "title": blog["title"],
+                    "img": blog["img"],
+                    "resumeContent": blog["resumeContent"],
+                    "content": blog["content"],
+                    "category": blog["category"],
+                    "date": blog["date"],
+                    "author": blog["author"]};
+            });
+            res.send(resumeBlog);
+        });
     });
 };
 

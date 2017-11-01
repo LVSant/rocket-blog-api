@@ -9,5 +9,8 @@ module.exports = function (app, db) {
     app.post('/admin/post', function (req, res) {
         controller.create(req, res, db);
     });
+    app.get('/admin/post', function(req, res){
+        controller.findBlogAdmin(req, res, db);
+    });
 };
 

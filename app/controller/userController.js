@@ -3,40 +3,7 @@ var bcrypt = require('bcrypt');
 var utilConf = require('../routes/util');
 var util = new utilConf();
 
-/*  
- *   POST one user; 
- *   URL: /user/
- *   Cotent-Type: application/json
- *   JSON Create Example:
- * {
- *	"email": "cde@cde.com",
- *	"password": "senha123",
- *	"name": "jhonny cash",
- *	"role" : "admin"
- *  } 
- */
-exports.register = function (req, res, db) {
-    util.decode(req, res);
-    var loggedUserId = req.decoded.id;
-    this.isUserAdmin(db, loggedUserId, function (userAdmin) {
 
-        if (userAdmin) {
-            var hash = bcrypt.hashSync(req.body.password, 10);
-            req.body.password = hash;
-            db.collection('User').insert(req.body, function (err, result) {
-                if (err)
-                {
-                    res.send({
-                        'error': 'An error has occurred'
-                    });
-                } else {
-                    res.send(result.ops[0].id);
-                }
-            });
-        } else
-            res.status(403).send({'message': 'You aren\'t an Admin'});
-    });
-};
 
 /*
  * validates user and generates a token.
@@ -73,37 +40,48 @@ exports.delete = function (req, res, db) {
 };
 
 /*  
- *   PUT one user; URL: /user/id 
+ *   PUT one user; URL: /admin/user/id 
  */
 exports.edit = function (req, res, db) {
-        
     util.decode(req, res, function () {
-        var loggedUserId = req.decoded.id;
 
-        this.isUserAdmin(db, loggedUserId, function (userAdmin) {
+        var loggedUserId = req.decoded.id;
+        module.exports.isUserAdmin(db, loggedUserId, function (userAdmin) {
+
             var id = req.params.id;
             var details = {
                 '_id': new ObjectID(id)
             };
 
-            var hashpasswd = bcrypt.hashSync(req.body.password, 10);
             var user = {
-                'email': req.body.email,
-                'password': hashpasswd,
                 'name': req.body.name,
                 'role': req.body.role
             };
 
+            /* if (req.body.password) {
+             var hashpasswd = bcrypt.hashSync(req.body.password, 10);
+             user['password'] = hashpasswd;
+             }*/
+            console.log('R U admin');
             if (userAdmin || id === loggedUserId) {
-                db.collection('User').update(details, user, function (err, result) {
-                    if (err) {
-                        res.send({
-                            'error': 'An error has occurred'
+                db.collection('User').updateOne(
+                        details,
+                        {$set: {
+                                name: user.name,
+                                role: user.role
+                            }
+                        },
+                        function (err, callback) {
+                            if (err) {
+                                res.send({'error': 'An error has occurred trying to update an User'});
+                            } else {
+                                if (callback["result"].n > 0) {
+                                    res.status(200).send({success: true, message: 'User updated successfully'});
+                                } else {
+                                    res.status(500).send({success: false, message: 'Failed to update User'});
+                                }
+                            }
                         });
-                    } else {
-                        util.authorization(req, res, db);
-                    }
-                });
             } else {
                 res.status(403).send({'message': 'You aren\'t an Admin'});
             }
@@ -122,7 +100,7 @@ exports.loginRequired = function (req, res, next) {
 };
 
 /*  
- *   GET one blog; URL: /blog/id 
+ *   GET one user; URL: /admin/user/id 
  */
 exports.findUserById = function (req, res, db) {
     var id = req.params.id;
@@ -131,9 +109,7 @@ exports.findUserById = function (req, res, db) {
     };
     db.collection('User').findOne(details, function (err, item) {
         if (err) {
-            res.send({
-                'error': 'An error has occurred'
-            });
+            res.send({'error': 'An error has occurred trying to find an User'});
         } else {
             res.send(item);
         }
@@ -152,7 +128,7 @@ exports.findAll = function (req, res, db) {
 };
 
 exports.getAllAdmins = function (db, callback) {
-    db.collection('User').find({role: 'admin'}).toArray(function (err, admins) {
+    db.collection('User').find({role: {$in: ['admin', 'superadmin']}}).toArray(function (err, admins) {
         if (err)
             throw err;
         callback(admins);
@@ -160,7 +136,7 @@ exports.getAllAdmins = function (db, callback) {
 };
 
 exports.isUserAdmin = function (db, userId, callback) {
-    this.getAllAdmins(db, function (adminUsers) {
+    module.exports.getAllAdmins(db, function (adminUsers) {
         var isUserAdmin = adminUsers.find(function (u) {
             return  u._id.equals(userId);
         });
@@ -171,7 +147,6 @@ exports.isUserAdmin = function (db, userId, callback) {
 exports.getMe = function (req, res, db) {
     util.decode(req, res, function () {
         var loggedUserId = req.decoded.id;
-        console.log('loggedUserId', loggedUserId);
         var details = {
             '_id': new ObjectID(loggedUserId)
         };
@@ -179,7 +154,6 @@ exports.getMe = function (req, res, db) {
             if (err) {
                 throw err;
             } else {
-                console.log('user', user);
                 if (user) {
                     res.send({
                         "id": user["_id"],
@@ -193,5 +167,40 @@ exports.getMe = function (req, res, db) {
             }
         });
 
+    });
+};
+
+/*  
+ *   POST one user; 
+ *   URL: /user/
+ *   Cotent-Type: application/json
+ *   JSON Create Example:
+ * {
+ *	"email": "cde@cde.com",
+ *	"password": "senha123",
+ *	"name": "jhonny cash",
+ *	"role" : "admin"
+ *  } 
+ */
+exports.register = function (req, res, db) {
+    util.decode(req, res);
+    var loggedUserId = req.decoded.id;
+    module.exports.isUserAdmin(db, loggedUserId, function (userAdmin) {
+
+        if (userAdmin) {
+            var hash = bcrypt.hashSync(req.body.password, 10);
+            req.body.password = hash;
+            db.collection('User').insert(req.body, function (err, result) {
+                if (err)
+                {
+                    res.send({
+                        'error': 'An error has occurred'
+                    });
+                } else {
+                    res.send(result.ops[0].id);
+                }
+            });
+        } else
+            res.status(403).send({'message': 'You aren\'t an Admin'});
     });
 };

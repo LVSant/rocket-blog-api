@@ -88,7 +88,7 @@ module.exports = function () {
                     console.log('deleting');
                     db.dropDatabase();
                     console.log('creating user superadmin');
-
+                    console.log('passwd', config.userAdminPassword);
                     var hash = bcrypt.hashSync(config.userAdminPassword, 10);
 
                     var user = {

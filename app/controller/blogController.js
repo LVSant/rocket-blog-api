@@ -1,6 +1,7 @@
 var ObjectID = require('mongodb').ObjectID;
 var utilConf = require('../routes/util');
 var util = new utilConf();
+var Blog = require('../model/blog');
 
 /*
  *   POST one blog;
@@ -19,7 +20,7 @@ function validateBlog(req) {
             "title": req.body.title,
             "img": req.body.img,
             "resumeContent": req.body.resumeContent,
-            "content":req.body.content,
+            "content": req.body.content,
             "category": req.body.category,
             "date": new Date(),
             "author": req.body.author
@@ -35,7 +36,7 @@ exports.create = function (req, res, db) {
 
     var validBlog = validateBlog(req);
     if (validBlog) {
-        db.collection('blog').insert(validBlog, function (err, result) {
+        db.collection('Blog').insert(validBlog, function (err, result) {
             if (err) {
                 res.send({
                     success: false,
@@ -58,7 +59,7 @@ exports.delete = function (req, res, db) {
     var details = {
         '_id': new ObjectID(id)
     };
-    db.collection('blog').remove(details, function (err, item) {
+    db.collection('Blog').remove(details, function (err, item) {
         if (err) {
             res.send({
                 'error': 'An error has occurred'
@@ -83,7 +84,7 @@ exports.edit = function (req, res, db) {
         'body': req.body.body
     };
 
-    db.collection('blog').update(details, blog, function (err, result) {
+    db.collection('Blog').update(details, blog, function (err, result) {
         if (err) {
             res.send({
                 'error': 'An error has occurred'
@@ -102,7 +103,7 @@ exports.findBlogById = function (req, res, db) {
     var details = {
         '_id': new ObjectID(id)
     };
-    db.collection('blog').findOne(details, function (err, item) {
+    db.collection('Blog').findOne(details, function (err, item) {
         if (err) {
             res.send({
                 'error': 'An error has occurred'
@@ -118,7 +119,7 @@ exports.findBlogById = function (req, res, db) {
  */
 exports.getAllBlogResume = function (req, res, db) {
 
-    db.collection('blog').find({}).toArray(function (err, blogs) {
+    db.collection('Blog').find({}).toArray(function (err, blogs) {
         if (err)
             throw err;
         var resumeBlog = blogs.map(function (blog) {
@@ -131,14 +132,13 @@ exports.getAllBlogResume = function (req, res, db) {
                 "date": blog["date"],
                 "author": blog["author"]};
         });
-
         res.send(resumeBlog);
     });
 };
 
 exports.findBlogAdmin = function (req, res, db) {
     util.decode(req, res, function () {
-        db.collection('blog').find({}).toArray(function (err, blogs) {
+        db.collection('Blog').find({}).toArray(function (err, blogs) {
             if (err)
                 throw err;
             var resumeBlog = blogs.map(function (blog) {
@@ -171,9 +171,9 @@ exports.blogExists = function (req, res, db) {
         return this === this.latinise();
     };
     var blogTitle = req.body.title;
-    var blogTitleSplitted = blogTitle.toString().split(' ').toString()
+    var blogTitleSplitted = blogTitle.toString().split(' ').toString();
     var blogTitleSplitted = blogTitleSplitted.replace(/,/g, '-').latinize();
-    db.collection('blog').find({titleUrl: blogTitleSplitted}).toArray(function (err, blogs) {
+    db.collection('Blog').find({titleUrl: blogTitleSplitted}).toArray(function (err, blogs) {
         if (err)
             throw err;
         if (blogs) {

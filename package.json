@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon server.js --env dev",
     "start": "node server.js",
-    "test": "jasmine"
+    "test": "mocha app/test "
   },
   "author": "leonardo viveiros",
   "license": "MIT",
@@ -40,8 +40,11 @@
     "passport-jwt": "^3.0.0"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-http": "^3.0.0",
     "jasmine": "^2.8.0",
     "karma": "^1.7.1",
+    "mocha": "^4.0.1",
     "nodemon": "^1.12.1"
   }
 }

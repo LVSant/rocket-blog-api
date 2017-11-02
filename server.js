@@ -1,7 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
-var mongodb = require('mongodb');
+//var mongodb = require('mongodb');
 var mongoose = require('mongoose');
 var morgan = require('morgan');
 var config = require('./config');
@@ -12,7 +12,8 @@ var util = new utilConf();
 app.use(bodyParser.json());
 app.use(auth.initialize());
 app.use(morgan('dev'));
-app.listen(process.env.PORT || 8080, function () {
+
+module.exports = app.listen(process.env.PORT || 8080, function () {
 
     var connect = function (callback) {
         mongoose.connect(config.database, {
@@ -22,28 +23,13 @@ app.listen(process.env.PORT || 8080, function () {
     };
     console.log('Rocket Blog API is Live!');
 
-//    if (util.isDevEnvironment()) {
 
     connect(function (db) {
         db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-
         util.setupEnvironment(db);
         require('./app/routes')(app, db);
     });
-    //  }
 
 });
 
-
-//util.setupEnvironment();
-
-
-
-/*mongodb.MongoClient.connect(config.database, function (err, database) {
- if (err)
- throw (err);
- 
- require('./app/routes')(app, database);
- });
- 
- */
+module.app = app;

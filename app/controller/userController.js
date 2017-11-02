@@ -62,7 +62,6 @@ exports.edit = function (req, res, db) {
              var hashpasswd = bcrypt.hashSync(req.body.password, 10);
              user['password'] = hashpasswd;
              }*/
-            console.log('R U admin');
             if (userAdmin || id === loggedUserId) {
                 db.collection('User').updateOne(
                         details,

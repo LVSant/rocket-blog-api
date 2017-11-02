@@ -1,8 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-
-var Blog = new Schema({
+var blogSchema = new Schema({
     _id: Number,
     titleUrl: String,
     title: String,
@@ -14,4 +13,4 @@ var Blog = new Schema({
     creationDate: {type: Date, default: Date.now}
 });
 
-//module.exports = mongoose.model('user', User);
+module.exports = mongoose.model('Blog', blogSchema);

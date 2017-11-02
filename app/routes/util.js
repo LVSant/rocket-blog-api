@@ -1,8 +1,8 @@
 var config = require('../../config');
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
-var userSchema = require('../model/user');
-var mongoose = require('mongoose');
+//var userSchema = require('../model/user');
+//var mongoose = require('mongoose');
 
 module.exports = function () {
     this.authorization = function (req, res, db) {

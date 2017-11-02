@@ -57,8 +57,9 @@ typings/
 # dotenv environment variables file
 .env
 
-config.js
 /nbproject/private/
 
 # Package-lock is causing error on Heroku, I don't know why
 package-lock.json
+
+config.js

@@ -51,9 +51,4 @@
     "nodemon": "^1.12.1",
     "codecov": "^1.0.1"
   },
-  "config": {
-    "ghooks": {
-      "pre-commit": "npm run standard"
-    }
-  }
 }

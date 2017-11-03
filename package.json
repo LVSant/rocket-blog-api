@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "nodemon server.js --env dev",
     "start": "node server.js",
-    "test": "nyc ./node_modules/.bin/ava -v",
+    "test": "mocha app/test --exit",
     "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
     "standard": "standard index.js"
   },
@@ -40,8 +40,6 @@
     "mongodb": "^2.2.33",
     "mongoose": "^4.12.3",
     "morgan": "^1.9.0",
-    "node-inspector": "^1.1.1",
-    "node-sass": "^4.5.3",
     "passport": "^0.4.0",
     "passport-jwt": "^3.0.0",
     "request": "^2.81.0"
@@ -53,12 +51,7 @@
     "karma": "^1.7.1",
     "mocha": "^4.0.1",
     "nodemon": "^1.12.1",
-    "ava": "^0.16.0",
-    "co-exec": "^1.0",
-    "codecov": "^1.0.1",
-    "ghooks": "^1.2.4",
-    "nyc": "^10.0.0",
-    "standard": "^8.4.0"
+    "codecov": "^1.0.1"
   },
   "config": {
     "ghooks": {

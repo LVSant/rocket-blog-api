@@ -1,6 +1,9 @@
 {
   "name": "blogcts",
   "version": "1.0.0",
+  "engines": {
+    "node":"8.8.1"
+    },
   "description": "Blog for UNICAMP-FT lecture of 'Science, Technology and Society'",
   "main": "index.js",
   "scripts": {

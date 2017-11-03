@@ -9,9 +9,7 @@
   "scripts": {
     "dev": "nodemon server.js --env dev",
     "start": "node server.js",
-    "test": "mocha app/test --exit",
-    "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
-    "standard": "standard index.js"
+    "test": "mocha app/test --exit"
   },
   "author": "leonardo viveiros",
   "license": "MIT",

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon server.js --env dev",
     "start": "node server.js",
-    "test": "mocha app/test "
+    "test": "mocha app/test --exit"
   },
   "author": "leonardo viveiros",
   "license": "MIT",

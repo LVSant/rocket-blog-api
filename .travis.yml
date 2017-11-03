@@ -6,4 +6,4 @@ deploy:
   provider: heroku
   app: rocket-blog-api
   strategy: git
-  run: "npm test"
+  run: "npm start"

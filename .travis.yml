@@ -1,5 +1,8 @@
 language: node_js
+node_js: 
+       - "0.10"
 deploy:
+  api_key: 5f2ae00c-d1da-4024-b322-9b6ff426064a
   provider: heroku
   app: rocket-blog-api
   strategy: git

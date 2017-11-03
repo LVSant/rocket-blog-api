@@ -59,7 +59,5 @@ typings/
 
 /nbproject/private/
 
-# Package-lock is causing error on Heroku, I don't know why
-package-lock.json
 
 config.js

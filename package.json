@@ -1,5 +1,5 @@
 {
-  "name": "blogcts",
+  "name": "rocket-blog-api",
   "version": "1.0.0",
   "engines": {
     "node": "8.8.1"
@@ -9,13 +9,15 @@
   "scripts": {
     "dev": "nodemon server.js --env dev",
     "start": "node server.js",
-    "test": "mocha app/test --exit"
+    "test": "mocha app/test --exit",
+    "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
+    "standard": "standard index.js"
   },
   "author": "leonardo viveiros",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/leonardoviveiros/blogcts.git"
+    "url": "git+https://github.com/leonardoviveiros/rocket-blog-api.git"
   },
   "keywords": [
     "blog",
@@ -23,14 +25,15 @@
     "node"
   ],
   "bugs": {
-    "url": "https://github.com/leonardoviveiros/blogcts/issues"
+    "url": "https://github.com/leonardoviveiros/rocket-blog-api/issues"
   },
-  "homepage": "https://github.com/leonardoviveiros/blogcts#readme",
+  "homepage": "https://github.com/leonardoviveiros/rocket-blog-api#readme",
   "dependencies": {
     "bcrypt": "^1.0.3",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
     "express": "^4.16.2",
+    "ghooks": "^2.0.0",
     "inspect": "0.0.2",
     "jsonwebtoken": "^8.1.0",
     "jwt-decode": "^2.2.0",
@@ -45,10 +48,11 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-http": "^3.0.0",
+    "codecov": "^1.0.1",
     "jasmine": "^2.8.0",
     "karma": "^1.7.1",
     "mocha": "^4.0.1",
     "nodemon": "^1.12.1",
-    "codecov": "^1.0.1"
+    "nyc": "^11.3.0"
   }
 }

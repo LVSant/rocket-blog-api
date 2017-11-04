@@ -1,4 +1,4 @@
-var controller = require('../../controller/blogController');
+var controller = require('../../controller/postController');
 
 module.exports = function (app, db) {
 
@@ -7,7 +7,7 @@ module.exports = function (app, db) {
     });
 
     app.get('/blog/post', function (req, res) {
-        
+
         if (req.query.category) {
             console.log('veio query');
             controller.findPostByCategory(req, res, db);

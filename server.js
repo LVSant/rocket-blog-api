@@ -1,16 +1,13 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
-//var mongodb = require('mongodb');
 var mongoose = require('mongoose');
 var morgan = require('morgan');
 var config = require('./config');
-var auth = require("./auth")();
 var utilConf = require("./app/routes/util");
 var util = new utilConf();
 
 app.use(bodyParser.json());
-app.use(auth.initialize());
 app.use(morgan('dev'));
 
 module.exports = app.listen(process.env.PORT || 8080, function () {

@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var Post = require('../model/blog');
+var Post = require('../model/post');
 var config = require('../../config');
 var chai = require('chai');
 var chaiHttp = require('chai-http');
@@ -8,18 +8,15 @@ var should = chai.should();
 
 chai.use(chaiHttp);
 
-
-
-
-describe('Testing da Blog', function () {
+describe('Unit Testing - testPosts', function () {
 
     before(function (done) {
         mongoose.connect(config.database, {
             useMongoClient: true
         });
         var db = mongoose.connection;
-
-        db.collection('Blog').remove({}, function (err, removed) {
+        //Remove all posts
+        db.collection('Post').remove({}, function (err, removed) {
             if (err)
                 throw err;
             done();
@@ -35,7 +32,6 @@ describe('Testing da Blog', function () {
                     .end((err, res) => {
                         if (err)
                             throw err;
-                        console.log('IN TEST\n RES:', res.body);
 
                         res.should.have.status(200);
                         res.body.should.be.a('array');

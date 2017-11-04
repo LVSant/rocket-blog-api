@@ -1,5 +1,5 @@
-var blogProtectedRoutes = require('./protected/blogProtectedRoutes');
-var blogOpenRoutes = require('./open/blogOpenRoutes');
+var postProtectedRoutes = require('./protected/postProtectedRoutes');
+var postOpenRoutes = require('./open/postOpenRoutes');
 var userProtectedRoutes = require('./protected/userProtectedRoutes');
 var utilConf = require('./util');
 var util = new utilConf();
@@ -32,7 +32,7 @@ module.exports = function (app, db) {
     /*
      * Here comes the open routes, that don't need authenticaion
      */
-    blogOpenRoutes(app, db);
+    postOpenRoutes(app, db);
 
     /*
      * Authenticates the user based on his token.
@@ -58,6 +58,6 @@ module.exports = function (app, db) {
     /*
      * Here comes the routes that need authentication
      */
-    blogProtectedRoutes(app, db);
+    postProtectedRoutes(app, db);
     userProtectedRoutes(app, db);
 };

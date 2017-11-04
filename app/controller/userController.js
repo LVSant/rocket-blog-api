@@ -77,7 +77,7 @@ exports.edit = function (req, res, db) {
                                 if (callback["result"].n > 0) {
                                     res.status(200).send({success: true, message: 'User updated successfully'});
                                 } else {
-                                    res.status(500).send({success: false, message: 'Failed to update User'});
+                                    res.status(500).send({success: false, message: 'User not found'});
                                 }
                             }
                         });

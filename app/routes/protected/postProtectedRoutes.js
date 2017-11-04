@@ -1,4 +1,4 @@
-var controller = require('../../controller/blogController');
+var controller = require('../../controller/postController');
 module.exports = function (app, db) {
     app.delete('/admin/post/:id', function (req, res) {
         controller.delete(req, res, db);
@@ -10,7 +10,7 @@ module.exports = function (app, db) {
         controller.create(req, res, db);
     });
     app.get('/admin/post', function(req, res){
-        controller.findBlogAdmin(req, res, db);
+        controller.findPostAdmin(req, res, db);
     });
 };
 

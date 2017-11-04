@@ -5,6 +5,8 @@ var chai = require('chai');
 var chaiHttp = require('chai-http');
 var server = require('../../server');
 var should = chai.should();
+var dbSetupConf = require('dbSetup');
+var dbSetup = new dbSetupConf();
 
 chai.use(chaiHttp);
 
@@ -15,6 +17,9 @@ describe('Unit Testing - testPosts', function () {
             useMongoClient: true
         });
         var db = mongoose.connection;
+
+        dbSetup.collectionPost(db);
+
         //Remove all posts
         db.collection('Post').remove({}, function (err, removed) {
             if (err)

@@ -5,7 +5,7 @@ var chai = require('chai');
 var chaiHttp = require('chai-http');
 var server = require('../../server');
 var should = chai.should();
-var dbSetupConf = require('dbSetup');
+var dbSetupConf = require('./dbSetup');
 var dbSetup = new dbSetupConf();
 
 chai.use(chaiHttp);

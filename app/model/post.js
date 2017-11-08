@@ -7,6 +7,7 @@ var postSchema = new Schema({
     title: String,
     img: String,
     resumeContent: String,
+    content: String,
     date: Date,
     author: String,
     category:String,

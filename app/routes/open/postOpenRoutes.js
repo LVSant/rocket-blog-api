@@ -8,11 +8,11 @@ module.exports = function (app, db) {
 
     app.get('/blog/post', function (req, res) {
         if (req.query.category) {
-            console.log('veio query');
+            console.log('get with query parameter');
             controller.findPostByCategory(req, res, db);
         } else {
-            console.log('nao veio query');
-            controller.getAllPostResume()(req, res, db);
+            console.log('get without query parameter');
+            controller.getAllPostResume(req, res);
         }
     });
 };

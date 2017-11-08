@@ -107,7 +107,7 @@ exports.findPostById = function (req, res, db) {
  */
 exports.getAllPostResume = function (req, res, db) {
 
-    db.collection('Post').find({}).toArray(function (err, posts) {
+    Post.find({}, function (err, posts) {
         if (err)
             throw err;
         var resumePost = posts.map(function (post) {
@@ -116,10 +116,12 @@ exports.getAllPostResume = function (req, res, db) {
                 "title": post["title"],
                 "img": post["img"],
                 "resumeContent": post["resumeContent"],
+                "content": post["content"],
                 "category": post["category"],
                 "date": post["date"],
                 "author": post["author"]};
         });
+
         res.send(resumePost);
     });
 };

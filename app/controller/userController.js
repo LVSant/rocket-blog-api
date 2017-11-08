@@ -116,13 +116,13 @@ exports.findUserById = function (req, res, db) {
 };
 
 /*  
- *   GET all blogs; URL: /blog/ 
+ *   GET all users; URL: /user/ 
  */
 exports.findAll = function (req, res, db) {
-    db.collection('User').find({}).toArray(function (err, blogs) {
+    db.collection('User').find({}).toArray(function (err, users) {
         if (err)
             throw err;
-        res.send(blogs);
+        res.send(users);
     });
 };
 

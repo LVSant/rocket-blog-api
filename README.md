@@ -1,7 +1,8 @@
-# Blog Rocket - API
+# Blog Rocket - API [![Build Status](https://travis-ci.org/leonardoviveiros/rocket-blog-api.svg?branch=master)](https://travis-ci.org/leonardoviveiros/rocket-blog-api)
 
 API designed for an exercise of lecture 'Science, Technology and Society' of UNICAMP-FT.
 Using Node.js, Express, Mongoose, JWT
+
 
 ### Prerequisites
 

@@ -17,27 +17,29 @@ exports.sign_in = function (req, res, db) {
  *   DELETE one user; URL: /user/id 
  */
 exports.delete = function (req, res, db) {
+
     util.decode(req, res);
     var loggedUserId = req.decoded.id;
-    this.isUserAdmin(db, loggedUserId, function (userAdmin) {
-        if (userAdmin) {
-            var id = req.params.id;
-            var details = {
-                '_id': new ObjectID(id)
-            };
 
-            db.collection('User').remove(details, function (err, item) {
-                if (err) {
-                    res.send({
-                        'error': 'An error has occurred'
-                    });
-                } else {
-                    res.send(item);
-                }
-            });
-        } else
-            res.status(403).send({'message': 'You aren\'t an Admin'});
+    var details = {'_id': loggedUserId, 'role': {$in: ['admin', 'superadmin']}};
+
+    User.find(details, function (err, users) {
+        if (err)
+            res.status(401).send({success: false, message: 'User is not admin'});
+        if (users) {
+            if (req.params['id']) {
+
+                var id = req.params.id;
+                var details = {'_id': new ObjectID(id)};
+                User.remove(details, function (err) {
+                    if (err)
+                        res.status(500).send({success: false, message: 'Failed to delete user'});
+                    res.status(200).send({success: true});
+                });
+            }
+        }
     });
+
 };
 
 /*  
@@ -119,19 +121,18 @@ exports.findUserById = function (req, res, db) {
 /*  
  *   GET all users; URL: /user/ 
  */
-exports.findAll = function (req, res, db) {
-    db.collection('User').find({}).toArray(function (err, users) {
-        if (err)
-            throw err;
-        res.send(users);
+exports.findAll = function (req, res) {
+    User.find({}, '_id name email role date', function (err, users) {
+        if (err) {
+            res.status(500).send({success: false, message: 'Couldn\'t find users'});
+        }
+        if (users) {
+            res.status(200).send({success: true, users: users});
+        }
     });
 };
-exports.getAllAdmins = function (db, callback) {
-    db.collection('User').find({role: {$in: ['admin', 'superadmin']}}).toArray(function (err, admins) {
-        if (err)
-            throw err;
-        callback(admins);
-    });
+exports.getAllAdmins = function (callback) {
+//
 };
 exports.isUserAdmin = function (db, userId, callback) {
     module.exports.getAllAdmins(db, function (adminUsers) {
@@ -169,25 +170,43 @@ exports.getMe = function (req, res) {
  *	"role" : "admin"
  *  } 
  */
-exports.register = function (req, res, db) {
+exports.register = function (req, res) {
     util.decode(req, res);
-    var loggedUserId = req.decoded.id;
-    module.exports.isUserAdmin(db, loggedUserId, function (userAdmin) {
 
-        if (userAdmin) {
-            var hash = bcrypt.hashSync(req.body.password, 10);
-            req.body.password = hash;
-            db.collection('User').insert(req.body, function (err, result) {
-                if (err)
-                {
-                    res.send({
-                        'error': 'An error has occurred'
-                    });
-                } else {
-                    res.send(result.ops[0].id);
-                }
-            });
-        } else
-            res.status(403).send({'message': 'You aren\'t an Admin'});
+    var loggedUserId = req.decoded.id;
+    var details = {'_id': loggedUserId, 'role': {$in: ['admin', 'superadmin']}};
+
+    User.find(details, function (err, users) {
+        if (err) {
+            res.status(401).send({success: false, message: 'User is not admin'});
+        }
+        if (users) {
+            if (req.body['password'] !== undefined || req.body.password === '') {
+
+                var hash = bcrypt.hashSync(req.body.password, 10);
+                var newUser = new User({
+                    _id: null,
+                    name: req.body['name'],
+                    email: req.body['email'],
+                    role: req.body['role'],
+                    password: hash,
+                    date: new Date()
+                });
+
+                User.create(newUser, function (err, user) {
+                    if (err) {
+                        res.status(500).send({success: false, message: 'Couldn\'t create user'});
+                    }
+                    if (user) {
+                        user.password = undefined;
+                        res.status(200).send({success: true, user: user});
+                    }
+                });
+            } else {
+                res.status(500).send({success: false, message: 'Cannot create user: blank password'});
+            }
+        } else {
+            res.status(401).send({success: false, message: 'User is not admin'});
+        }
     });
 };

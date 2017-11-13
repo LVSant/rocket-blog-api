@@ -10,7 +10,8 @@ module.exports = function (app, db) {
     });
 
     app.post('/admin/user', function (req, res) {
-        controller.register(req, res, db);
+        console.log('posting user');
+        controller.register(req, res);
     });
 
     app.get('/admin/me', function (req, res) {
@@ -26,7 +27,7 @@ module.exports = function (app, db) {
      *   GET all users; URL: /user/ 
      */
     app.get('/admin/user', function (req, res) {
-        controller.findAll(req, res, db);
+        controller.findAll(req, res);
     });
 
 };

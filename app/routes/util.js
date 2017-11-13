@@ -38,7 +38,7 @@ module.exports = function () {
         }
     };
 
-    this.decode = function (req, res, cb) {
+    this.decode = function (req, res) {
         try {
             var token = req.get('Authorization');
             console.log('trying to decode');
@@ -48,9 +48,7 @@ module.exports = function () {
                     if (err) {
                         return res.json({success: false, message: 'Failed to authenticate token.'});
                     } else {
-                        console.log('decoded');
                         req.decoded = decoded;
-                        cb();
                     }
                 });
             } else {

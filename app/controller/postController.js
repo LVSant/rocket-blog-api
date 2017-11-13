@@ -5,7 +5,8 @@ var Post = require('../model/post');
 
 function validatePost(req) {
     try {
-        var newPost = {
+        var newPost = new Post({
+            "_id": new ObjectID(),
             "title": req.body.title,
             "img": req.body.img,
             "resumeContent": req.body.resumeContent,
@@ -13,25 +14,32 @@ function validatePost(req) {
             "category": req.body.category,
             "date": new Date(),
             "author": req.body.author
-        };
+        });
         return newPost;
     } catch (ex) {
         console.error('post not valid:', ex);
-        return false;
     }
 }
-exports.create = function (req, res, db) {
+exports.create = function (req, res) {
 
     var validPost = validatePost(req);
     if (validPost) {
-        db.collection('Post').insert(validPost, function (err, result) {
+        Post.create(validPost, function (err, Post) {
             if (err) {
-                res.send({
+                res.status(500).send({
                     success: false,
-                    message: 'An error has occurred trying to insert a new post'
+                    message: 'An error has occurred trying to insert a new post',
+                    error: err
                 });
             } else {
-                res.status(200).send(result.ops[0]);
+                if (Post) {
+                    res.status(200).send({
+                        success: true,
+                        message: 'Post successfuly created!',
+                        object: Post
+                    });
+
+                }
             }
         });
     } else {
@@ -42,20 +50,20 @@ exports.create = function (req, res, db) {
 /*
  *   DELETE one post; URL: /post/id
  */
-exports.delete = function (req, res, db) {
+exports.delete = function (req, res) {
     var id = req.params.id;
-    var details = {
-        '_id': new ObjectID(id)
-    };
-    db.collection('Post').remove(details, function (err, item) {
+//    var details = {
+//        '_id': new ObjectID(id)
+//    };
+
+    Post.remove({_id: id}, function (err, removed) {
         if (err) {
-            res.send({
-                'error': 'An error has occurred'
-            });
-        } else {
-            res.send(item);
+            res.status(500).send({success: false, message: 'Failed to remove post'});
+        } else if (removed) {
+            res.send(200);
         }
     });
+
 };
 
 /*
@@ -126,24 +134,15 @@ exports.getAllPostResume = function (req, res, db) {
     });
 };
 
-exports.findPostAdmin = function (req, res, db) {
+exports.findPostAdmin = function (req, res) {
     util.decode(req, res, function () {
-        db.collection('Post').find({}).toArray(function (err, posts) {
+        Post.find({}, function (err, posts) {
+
             if (err)
-                throw err;
-            var resumePost = posts.map(function (post) {
-                return {"id": post["_id"],
-                    "titleUrl": post["titleUrl"],
-                    "title": post["title"],
-                    "img": post["img"],
-                    "resumeContent": post["resumeContent"],
-                    "content": post["content"],
-                    "category": post["category"],
-                    "date": post["date"],
-                    "author": post["author"]};
-            });
-            res.send(resumePost);
+                res.status(500).send(posts);
+            res.send(posts);
         });
+
     });
 };
 

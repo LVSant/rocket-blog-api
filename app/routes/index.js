@@ -26,7 +26,7 @@ module.exports = function (app, db) {
      * Generate a token if a valid user is provided;
      */
     app.post('/admin/auth', function (req, res) {
-        util.authorization(req, res, db);
+        util.authorization(req, res);
     });
 
     /*

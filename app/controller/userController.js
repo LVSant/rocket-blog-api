@@ -1,5 +1,6 @@
 var ObjectID = require('mongodb').ObjectID;
 var bcrypt = require('bcrypt');
+var User = require('../model/user');
 var utilConf = require('../routes/util');
 var util = new utilConf();
 
@@ -48,45 +49,47 @@ exports.edit = function (req, res, db) {
         var loggedUserId = req.decoded.id;
         module.exports.isUserAdmin(db, loggedUserId, function (userAdmin) {
 
-            var id = req.params.id;
-            var details = {
-                '_id': new ObjectID(id)
-            };
+        if (req.body.password) {
+        var hashpasswd = bcrypt.hashSync(req.body.password, 10);
+                //user['password'] = hashpasswd;
+        }
 
-            var user = {
-                'name': req.body.name,
-                'role': req.body.role
-            };
+        if (userAdmin || id === loggedUserId) {
 
-            /* if (req.body.password) {
-             var hashpasswd = bcrypt.hashSync(req.body.password, 10);
-             user['password'] = hashpasswd;
-             }*/
-            if (userAdmin || id === loggedUserId) {
-                db.collection('User').updateOne(
-                        details,
-                        {$set: {
-                                name: user.name,
-                                role: user.role
-                            }
-                        },
-                        function (err, callback) {
-                            if (err) {
-                                res.send({'error': 'An error has occurred trying to update an User'});
-                            } else {
-                                if (callback["result"].n > 0) {
-                                    res.status(200).send({success: true, message: 'User updated successfully'});
-                                } else {
-                                    res.status(500).send({success: false, message: 'User not found'});
-                                }
-                            }
-                        });
-            } else {
-                res.status(403).send({'message': 'You aren\'t an Admin'});
-            }
+        var query = {'username':req.user.username};
+                //req.newData.username = req.user.username;
+                User.findOneAndUpdate(query, req.newData, {upsert:true}, function(err, doc){
+                if (err)
+                        return res.send(500, { error: err });
+                        //return res.send("succesfully saved");
+
+                });
+        } else 
+        res.status(403).send({'message': 'You aren\'t an Admin'});
         });
     });
 };
+        
+/*db.collection('User').updateOne(
+ details,
+ {$set: {
+ name: user.name,
+ role: user.role
+ }
+ },
+ function (err, callback) {
+ if (err) {
+ res.send({'error': 'An error has occurred trying to update an User'});
+ } else {
+ if (callback["result"].n > 0) {
+ res.status(200).send({success: true, message: 'User updated successfully'});
+ } else {
+ res.status(500).send({success: false, message: 'User not found'});
+ }
+ }
+ });*/
+
+
 
 exports.loginRequired = function (req, res, next) {
     if (req.user) {
@@ -97,7 +100,6 @@ exports.loginRequired = function (req, res, next) {
         });
     }
 };
-
 /*  
  *   GET one user; URL: /admin/user/id 
  */
@@ -114,7 +116,6 @@ exports.findUserById = function (req, res, db) {
         }
     });
 };
-
 /*  
  *   GET all users; URL: /user/ 
  */
@@ -125,7 +126,6 @@ exports.findAll = function (req, res, db) {
         res.send(users);
     });
 };
-
 exports.getAllAdmins = function (db, callback) {
     db.collection('User').find({role: {$in: ['admin', 'superadmin']}}).toArray(function (err, admins) {
         if (err)
@@ -133,7 +133,6 @@ exports.getAllAdmins = function (db, callback) {
         callback(admins);
     });
 };
-
 exports.isUserAdmin = function (db, userId, callback) {
     module.exports.getAllAdmins(db, function (adminUsers) {
         var isUserAdmin = adminUsers.find(function (u) {
@@ -142,7 +141,6 @@ exports.isUserAdmin = function (db, userId, callback) {
         callback(isUserAdmin);
     });
 };
-
 exports.getMe = function (req, res, db) {
     util.decode(req, res, function () {
         var loggedUserId = req.decoded.id;
@@ -165,10 +163,8 @@ exports.getMe = function (req, res, db) {
                 }
             }
         });
-
     });
 };
-
 /*  
  *   POST one user; 
  *   URL: /user/

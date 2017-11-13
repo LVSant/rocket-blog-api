@@ -10,22 +10,22 @@ var util = new utilConf();
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 
+mongoose.Promise = global.Promise;
 module.exports = app.listen(process.env.PORT || 8080, function () {
 
-    var connect = function (callback) {
-        mongoose.connect(config.database, {
-            useMongoClient: true
-        });
-        callback(mongoose.connection);
-    };
-    console.log('Rocket Blog API is Live!');
 
-
-    connect(function (db) {
-        db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-        util.setupEnvironment(db);
-        require('./app/routes')(app, db);
+    mongoose.connect(config.database, {
+        useMongoClient: true
     });
+
+    mongoose.connection.once('open', function () {
+        console.log('Connected to Production database!');
+        util.setupEnvironment();
+        require('./app/routes')(app);
+    }).on('error', function () {
+        console.log('Failed to connect to MongoDB - Production!');
+    });
+
 
 });
 

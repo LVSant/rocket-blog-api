@@ -1,9 +1,9 @@
 var mongoose = require('mongoose');
+var ObjectId = mongoose.Schema.Types.ObjectId;
 var Schema = mongoose.Schema;
 
-
 var userSchema = new Schema({
-    _id: Number,
+    _id: {type: ObjectId, ref: 'users'},
     name: String,
     email: String,
     role: String,
@@ -11,19 +11,4 @@ var userSchema = new Schema({
     date: {type: Date, default: Date.now}
 });
 
-module.exports = mongoose.model('User', userSchema);
-
-
-/*module.exports = this.create({"name": "Snoopy",
- "email": "ab",
- "password": "ab",
- "role": "superadmin"
- }, function (err, userInstance) {
- if (err)
- throw err;
- 
- });
- */
-
-
-
+module.exports = mongoose.model('users', userSchema);

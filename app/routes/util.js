@@ -1,38 +1,40 @@
 var config = require('../../config');
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
-//var userSchema = require('../model/user');
-//var mongoose = require('mongoose');
+var User = require('../model/user');
+
 
 module.exports = function () {
-    this.authorization = function (req, res, db) {
+    this.authorization = function (req, res) {
 
-        if (req.body.email && req.body.password) {
-            db.collection('User').find({email: req.body.email}).toArray(function (err, users) {
-                if (err)
-                    throw err;
+        var email = req.body.email;
+        var password = req.body.password;
+        if (email) {
+            if (password) {
+                User.findOne({'email': req.body.email}, function (err, user) {
+                    if (err)
+                        res.status(500).send({success: false, message: 'User not found'});
 
-                var email = req.body.email;
-                var password = req.body.password;
-                var user = users.find(function (u) {
-                    return u.email === email && bcrypt.compareSync(password, u.password);
+                    console.log('user:=', user);
+                    if (bcrypt.compareSync(password, user.password)) {
+                        var payload = {
+                            id: user._id
+                        };
+                        var token = jwt.sign(payload, config.jwtSecret, {
+                            expiresIn: 60 * 60 * 2//2h
+                        });
+                        res.json({
+                            success: true,
+                            token: token});
+                    } else {
+                        res.status(401).send({success: false, message: 'User not found'});
+                    }
                 });
-                if (user) {
-                    var payload = {
-                        id: user._id
-                    };
-                    var token = jwt.sign(payload, config.jwtSecret, {
-                        expiresIn: 60 * 60 * 2//2h
-                    });
-                    res.json({
-                        success: true,
-                        token: token});
-                } else {
-                    res.sendStatus(401);
-                }
-            });
+            } else {
+                res.status(401).send({success: false, message: 'Missing Password'});
+            }
         } else {
-            res.status(401).send({message: 'Invalid User or Password'});
+            res.status(401).send({success: false, message: 'Missing Email'});
         }
     };
 
@@ -76,32 +78,50 @@ module.exports = function () {
         }
     };
 
-    this.setupEnvironment = function (db) {
-        db.collection('User').findOne({role: 'superadmin'}, function (err, superAdminExists) {
+    this.setupEnvironment = function () {
+
+        User.findOne({'email': 'ab', 'role': 'superadmin'}, function (err, superAdmin) {
+
             if (err) {
                 throw err;
             } else {
-                if (superAdminExists) {
+                if (superAdmin) {
                     console.log('superAdmin found');
                 } else {
                     console.log('superAdmin not found');
-                    console.log('deleting');
-                    db.dropDatabase();
+                    User.remove({}, function (err, removed) {
+                        if (err)
+                            throw err;
+                        if (removed) {
+                            console.log('deleted all users');
+                        }
+                    });
+
                     console.log('creating user superadmin');
                     console.log('passwd', config.userAdminPassword);
                     var hash = bcrypt.hashSync(config.userAdminPassword, 10);
 
-                    var user = {
-                        "name": "Snoopy",
-                        "email": "ab",
-                        "password": hash,
-                        "role": "superadmin",
-                        "date": new Date()
-                    };
+                    var user = new User({
+                        _id: null,
+                        name: "Snoopy",
+                        email: "ab",
+                        password: hash,
+                        role: "superadmin",
+                        date: new Date()
+                    });
 
-                    db.collection('User').insert(user);
+                    User.create(user, function (err, User) {
+                        if (err) {
+                            console.error('failed to create user:', err);
+                        }
+                        if (User) {
+                            console.log('createdSuperAdmin');
+                        }
+                    });
                 }
             }
         });
+
+
     };
 };

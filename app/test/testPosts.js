@@ -11,25 +11,32 @@ chai.use(chaiHttp);
 
 
 describe('Unit Testing - testPosts', function () {
-    before(function (done) {
+    beforeEach(function (done) {
+        Post.remove({}, function (err, removed) {
+            if (err) {
+                console.log('Failed to remove all', err);
+            } else if (removed) {
+                var newPost = new Post({
+                    _id: null,
+                    title: "title",
+                    img: "img",
+                    resumeContent: "resumeContent",
+                    content: "content",
+                    category: "category",
+                    date: "2018-04-20T16:20:00.000Z",
+                    author: "author"
+                });
 
-        var newPost = new Post({
-            _id: "",
-            title: "title",
-            img: "img",
-            resumeContent: "resumeContent",
-            content: "content",
-            category: "category",
-            date: "2018-04-20T16:20:00.000Z",
-            author: "author"
-        });
+                Post.create(newPost, function (err, Post) {
 
-        Post.create(newPost, function (err, post) {
-            if (err)
-                throw err;
-            if (post) {
-                console.log('creating post for test');
-                done();
+                    if (err) {
+                        console.error('failed to create post:', err);
+                    }
+                    if (Post) {
+                        console.log('creating post for test');
+                        done();
+                    }
+                });
             }
         });
     });

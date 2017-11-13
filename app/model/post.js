@@ -1,8 +1,9 @@
 var mongoose = require('mongoose');
+var ObjectId = mongoose.Schema.Types.ObjectId;
 var Schema = mongoose.Schema;
 
 var postSchema = new Schema({
-    _id: Number,
+    _id: {type: ObjectId, ref: 'posts'},
     titleUrl: String,
     title: String,
     img: String,
@@ -10,8 +11,8 @@ var postSchema = new Schema({
     content: String,
     date: Date,
     author: String,
-    category:String,
+    category: String,
     creationDate: {type: Date, default: Date.now}
 });
 
-module.exports = mongoose.model('Post', postSchema);
+module.exports = mongoose.model('posts', postSchema);

@@ -14,7 +14,7 @@ module.exports = function (app, db) {
     });
 
     app.get('/admin/me', function (req, res) {
-        controller.getMe(req, res, db);
+        controller.getMe(req, res);
     });
     /*  
      *   GET one user; URL: /user/id 

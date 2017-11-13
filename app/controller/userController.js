@@ -49,27 +49,27 @@ exports.edit = function (req, res, db) {
         var loggedUserId = req.decoded.id;
         module.exports.isUserAdmin(db, loggedUserId, function (userAdmin) {
 
-        if (req.body.password) {
-        var hashpasswd = bcrypt.hashSync(req.body.password, 10);
+            if (req.body.password) {
+                var hashpasswd = bcrypt.hashSync(req.body.password, 10);
                 //user['password'] = hashpasswd;
-        }
+            }
 
-        if (userAdmin || id === loggedUserId) {
+            if (userAdmin || id === loggedUserId) {
 
-        var query = {'username':req.user.username};
+                var query = {'username': req.user.username};
                 //req.newData.username = req.user.username;
-                User.findOneAndUpdate(query, req.newData, {upsert:true}, function(err, doc){
-                if (err)
-                        return res.send(500, { error: err });
-                        //return res.send("succesfully saved");
+                User.findOneAndUpdate(query, req.newData, {upsert: true}, function (err, doc) {
+                    if (err)
+                        return res.send(500, {error: err});
+                    //return res.send("succesfully saved");
 
                 });
-        } else 
-        res.status(403).send({'message': 'You aren\'t an Admin'});
+            } else
+                res.status(403).send({'message': 'You aren\'t an Admin'});
         });
     });
 };
-        
+
 /*db.collection('User').updateOne(
  details,
  {$set: {
@@ -141,28 +141,20 @@ exports.isUserAdmin = function (db, userId, callback) {
         callback(isUserAdmin);
     });
 };
-exports.getMe = function (req, res, db) {
+exports.getMe = function (req, res) {
     util.decode(req, res, function () {
         var loggedUserId = req.decoded.id;
         var details = {
             '_id': new ObjectID(loggedUserId)
         };
-        db.collection('User').findOne(details, function (err, user) {
-            if (err) {
-                throw err;
-            } else {
-                if (user) {
-                    res.send({
-                        "id": user["_id"],
-                        "name": user["name"],
-                        "email": user["email"],
-                        "role": user["role "]
-                    });
-                } else {
-                    res.status(403).send({"message": "User not found"});
-                }
+
+        User.findOne(details, '_id name email role date', function (err, user) {
+            if (err)
+                res.status(403).send({success: false, message: "Unable to find user"});
+            if (user) {
+                res.status(200).send(user);
             }
-        });
+        }).select();
     });
 };
 /*  

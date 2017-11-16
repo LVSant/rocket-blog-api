@@ -14,7 +14,7 @@ mongoose.Promise = global.Promise;
 module.exports = app.listen(process.env.PORT || 8080, function () {
 
 
-    mongoose.connect(config.database, {
+    mongoose.connect(config.databaseTest, {
         useMongoClient: true
     });
 

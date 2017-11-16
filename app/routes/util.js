@@ -11,11 +11,12 @@ module.exports = function () {
         var password = req.body.password;
         if (email) {
             if (password) {
-                User.findOne({'email': req.body.email}, function (err, user) {
+                User.findOne({email: email}, function (err, user) {
                     if (err)
-                        res.status(500).send({success: false, message: 'User not found'});
+                        res.status(500).send({success: false, message: 'Error'});
+                    if (!user)
+                        res.status(404).send({success: false, message: 'User not found'});
 
-                    console.log('user:=', user);
                     if (bcrypt.compareSync(password, user.password)) {
                         var payload = {
                             id: user._id
@@ -41,9 +42,7 @@ module.exports = function () {
     this.decode = function (req, res, cb) {
         try {
             var token = req.get('Authorization');
-            console.log('trying to decode');
             if (token) {
-                console.log('valid token');
                 jwt.verify(token, config.jwtSecret, function (err, decoded) {
                     if (err) {
                         return res.json({success: false, message: 'Failed to authenticate token.'});
@@ -77,7 +76,7 @@ module.exports = function () {
         }
     };
 
-    this.setupEnvironment = function () {
+    this.setupEnvironment = function (done = null) {
 
         User.findOne({'email': 'ab', 'role': 'superadmin'}, function (err, superAdmin) {
 
@@ -96,8 +95,6 @@ module.exports = function () {
                         }
                     });
 
-                    console.log('creating user superadmin');
-                    console.log('passwd', config.userAdminPassword);
                     var hash = bcrypt.hashSync(config.userAdminPassword, 10);
 
                     var user = new User({
@@ -114,13 +111,13 @@ module.exports = function () {
                             console.error('failed to create user:', err);
                         }
                         if (User) {
-                            console.log('createdSuperAdmin');
+                            console.log('created SuperAdmin');
                         }
                     });
                 }
             }
+            if (done)
+                done();
         });
-
-
     };
 };

@@ -47,61 +47,41 @@ exports.delete = function (req, res, db) {
  */
 exports.edit = function (req, res, db) {
     util.decode(req, res, function () {
-
         var loggedUserId = req.decoded.id;
-        module.exports.isUserAdmin(db, loggedUserId, function (userAdmin) {
+        var details = {'_id': loggedUserId, 'role': {$in: ['admin', 'superadmin']}};
+        User.findOne(details, function (err, userAdmin) {
+            if (err)
+                res.status(500).send({success: false, message: 'Failed to find logged user'});
+            if (userAdmin) {
+                if (req.params['id'] !== undefined) {
+                    User.findById(req.params.id, function (err, user) {
+                        if (err)
+                            res.status(500).send({success: false, message: 'Failed to find user to update'});
 
-            if (req.body.password) {
-                var hashpasswd = bcrypt.hashSync(req.body.password, 10);
-                //user['password'] = hashpasswd;
-            }
+                        user.name = req.body['name'];
+                        user.email = req.body['email'];
+                        user.role = req.body['role'];
+                        if (req.body['password'] !== undefined) {
+                            var hashpasswd = bcrypt.hashSync(req.body.password, 10);
+                            user.password = hashpasswd;
+                        }
 
-            if (userAdmin || id === loggedUserId) {
-
-                var query = {'username': req.user.username};
-                //req.newData.username = req.user.username;
-                User.findOneAndUpdate(query, req.newData, {upsert: true}, function (err, doc) {
-                    if (err)
-                        return res.send(500, {error: err});
-                    //return res.send("succesfully saved");
-
-                });
+                        user.save(function (err, updatedUser) {
+                            if (err)
+                                res.status(500).send({success: false, message: 'Failed to update user'});
+                            updatedUser.password = undefined;
+                            res.status(200).send(updatedUser);
+                        });
+                    });
+                } else {
+                    res.status(500).send({success: false, message: 'Invalid id provided'});
+                }
             } else
-                res.status(403).send({'message': 'You aren\'t an Admin'});
+                res.status(403).send({success: false, message: 'You aren\'t an Admin'});
         });
     });
 };
 
-/*db.collection('User').updateOne(
- details,
- {$set: {
- name: user.name,
- role: user.role
- }
- },
- function (err, callback) {
- if (err) {
- res.send({'error': 'An error has occurred trying to update an User'});
- } else {
- if (callback["result"].n > 0) {
- res.status(200).send({success: true, message: 'User updated successfully'});
- } else {
- res.status(500).send({success: false, message: 'User not found'});
- }
- }
- });*/
-
-
-
-exports.loginRequired = function (req, res, next) {
-    if (req.user) {
-        next();
-    } else {
-        return res.status(401).json({
-            message: 'Unauthorized user!'
-        });
-    }
-};
 /*  
  *   GET one user; URL: /admin/user/id 
  */
@@ -131,9 +111,7 @@ exports.findAll = function (req, res) {
         }
     });
 };
-exports.getAllAdmins = function (callback) {
-//
-};
+
 exports.isUserAdmin = function (db, userId, callback) {
     module.exports.getAllAdmins(db, function (adminUsers) {
         var isUserAdmin = adminUsers.find(function (u) {
@@ -176,16 +154,16 @@ exports.register = function (req, res) {
         var loggedUserId = req.decoded.id;
         var details = {'_id': loggedUserId, 'role': {$in: ['admin', 'superadmin']}};
 
-        User.find(details, function (err, users) {
+        User.findOne(details, function (err, user) {
             if (err) {
                 res.status(401).send({success: false, message: 'User is not admin'});
             }
-            if (users) {
-                if (req.body['password'] !== undefined || req.body.password === '') {
+            if (user) {
+                if (req.body['password']) {
 
                     var hash = bcrypt.hashSync(req.body.password, 10);
                     var newUser = new User({
-                        _id: null,
+                        _id: new ObjectID(),
                         name: req.body['name'],
                         email: req.body['email'],
                         role: req.body['role'],

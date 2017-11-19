@@ -4,19 +4,10 @@ var User = require('../model/user');
 var utilConf = require('../routes/util');
 var util = new utilConf();
 
-
-
-/*
- * validates user and generates a token.
- */
-exports.sign_in = function (req, res, db) {
-    util.authorization(req, res, db);
-};
-
 /*  
- *   DELETE one user; URL: /user/id 
+ *   DELETE one user; URL: /admin/user/id 
  */
-exports.delete = function (req, res, db) {
+exports.delete = function (req, res) {
 
     util.decode(req, res, function () {
         var loggedUserId = req.decoded.id;
@@ -45,16 +36,18 @@ exports.delete = function (req, res, db) {
 /*  
  *   PUT one user; URL: /admin/user/id 
  */
-exports.edit = function (req, res, db) {
+exports.edit = function (req, res) {
     util.decode(req, res, function () {
         var loggedUserId = req.decoded.id;
-        var details = {'_id': loggedUserId, 'role': {$in: ['admin', 'superadmin']}};
+        var editUserId = req.params.id;
+        var details = {'_id': loggedUserId};
+
         User.findOne(details, function (err, userAdmin) {
             if (err)
                 res.status(500).send({success: false, message: 'Failed to find logged user'});
-            if (userAdmin) {
+            if (userAdmin.role === 'admin' || userAdmin.role === 'superadmin' || loggedUserId === editUserId) {
                 if (req.params['id'] !== undefined) {
-                    User.findById(req.params.id, function (err, user) {
+                    User.findById(editUserId, function (err, user) {
                         if (err)
                             res.status(500).send({success: false, message: 'Failed to find user to update'});
 
@@ -83,23 +76,7 @@ exports.edit = function (req, res, db) {
 };
 
 /*  
- *   GET one user; URL: /admin/user/id 
- */
-exports.findUserById = function (req, res, db) {
-    var id = req.params.id;
-    var details = {
-        '_id': new ObjectID(id)
-    };
-    db.collection('User').findOne(details, function (err, item) {
-        if (err) {
-            res.send({'error': 'An error has occurred trying to find an User'});
-        } else {
-            res.send(item);
-        }
-    });
-};
-/*  
- *   GET all users; URL: /user/ 
+ *   GET all users; URL: /admin/user/ 
  */
 exports.findAll = function (req, res) {
     User.find({}, '_id name email role date', function (err, users) {
@@ -108,6 +85,19 @@ exports.findAll = function (req, res) {
         }
         if (users) {
             res.status(200).send({success: true, users: users});
+        }
+    });
+};
+/*  
+ *   GET one user; URL: /admin/user/id
+ */
+exports.findUserById = function (req, res) {
+    User.find({_id: req.params.id}, '_id name email role date', function (err, user) {
+        if (err) {
+            res.status(500).send({success: false, message: 'Couldn\'t find users'});
+        }
+        if (user) {
+            res.status(200).send({success: true, user: user});
         }
     });
 };

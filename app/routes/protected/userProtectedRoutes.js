@@ -10,7 +10,6 @@ module.exports = function (app, db) {
     });
 
     app.post('/admin/user', function (req, res) {
-        console.log('posting user');
         controller.register(req, res);
     });
 
@@ -21,7 +20,7 @@ module.exports = function (app, db) {
      *   GET one user; URL: /user/id 
      */
     app.get('/admin/user/:id', function (req, res) {
-        controller.findUserById(req, res, db);
+        controller.findUserById(req, res);
     });
     /*  
      *   GET all users; URL: /user/ 

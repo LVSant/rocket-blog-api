@@ -8,7 +8,7 @@ var utilConf = require("./app/routes/util");
 var util = new utilConf();
 
 app.use(bodyParser.json());
-app.use(morgan('dev'));
+app.use(morgan('combined'));
 
 mongoose.Promise = global.Promise;
 module.exports = app.listen(process.env.PORT || 8080, function () {

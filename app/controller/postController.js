@@ -52,15 +52,12 @@ exports.create = function (req, res) {
  */
 exports.delete = function (req, res) {
     var id = req.params.id;
-//    var details = {
-//        '_id': new ObjectID(id)
-//    };
 
     Post.remove({_id: id}, function (err, removed) {
         if (err) {
             res.status(500).send({success: false, message: 'Failed to remove post'});
         } else if (removed) {
-            res.send(200);
+            res.status(200).send({success:true});
         }
     });
 
@@ -69,44 +66,49 @@ exports.delete = function (req, res) {
 /*
  *   PUT one post; URL: /post/id
  */
-exports.edit = function (req, res, db) {
-    var id = req.params.id;
-    var details = {
-        '_id': new ObjectID(id)
-    };
+exports.edit = function (req, res) {
 
-    var post = {
-        'title': req.body.title,
-        'body': req.body.body
-    };
-
-    db.collection('Post').update(details, post, function (err, result) {
-        if (err) {
-            res.send({
-                'error': 'An error has occurred'
-            });
-        } else {
-            res.send(result);
+    var edittedPostId = req.params.id;
+    Post.findById(edittedPostId, function (err, post) {
+        if (err)
+            res.status(500).send({success: false, message: 'Error'});
+        if (!post) {
+            res.status(403).send({success: false, message: 'Failed to find post'});
         }
+
+        post.title = req.body['title'];
+        post.img = req.body['img'];
+        post.resumeContent = req.body['resumeContent'];
+        post.content = req.body['content'];
+        post.category = req.body['category'];
+        post.author = req.body['author'];
+
+
+        post.save(function (err, updatedPost) {
+            if (err)
+                res.status(500).send({success: false, message: 'Failed to update post'});
+            res.status(200).send(updatedPost);
+        });
     });
 };
 
 /*
- *   GET one post; URL: /post/id
+ *   GET one post; URL: /blog/post/id
  */
-exports.findPostById = function (req, res, db) {
+exports.findPostById = function (req, res) {
     var id = req.params.id;
     var details = {
         '_id': new ObjectID(id)
     };
-    db.collection('Post').findOne(details, function (err, item) {
+
+    Post.find(details, function (err, post) {
         if (err) {
-            res.send({
-                'error': 'An error has occurred'
-            });
-        } else {
-            res.send(item);
+            res.status(500).send({success: false, message: 'Failed to find post'});
         }
+        if (!post) {
+            res.status(403).send({success: false, message: 'Post not found'});
+        }
+        res.status(200).send(post);
     });
 };
 

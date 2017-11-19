@@ -73,21 +73,13 @@ describe('Unit Testing - testUser', function () {
     });
 
     describe('/GET admin/user', () => {
-        it('should return an array with the users inserted before', (done) => {
+        it('should return an array with two users', (done) => {
             chai.request(server)
                     .get('/admin/user')
                     .set('Authorization', token)
                     .end((err, res) => {
                         if (err)
                             throw err;
-
-                        var compareNewUser = [{
-                                name: "João José",
-                                email: "joaojoze@jozejoao.com",
-                                role: "member",
-                                date: "2018-04-20T16:20:00.000Z"
-                            }];
-
 
                         res.should.have.status(200);
                         res.body.users.should.be.a('array');
@@ -121,12 +113,12 @@ describe('Unit Testing - testUser', function () {
 
     after(function (done) {
         done();
-//        User.remove({date: "2018-04-20T16:20:00.000Z"}, function (err, removed) {
-//            if (err)
-//                throw err;
-//            if (removed)
-//                console.log('User for test removed');
-//            done();
-//        });
+        User.remove({date: "2018-04-20T16:20:00.000Z"}, function (err, removed) {
+            if (err)
+                throw err;
+            if (removed)
+                console.log('User for test removedF');
+            done();
+        });
     });
 });

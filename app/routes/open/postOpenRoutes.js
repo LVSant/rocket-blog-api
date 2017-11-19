@@ -3,7 +3,7 @@ var controller = require('../../controller/postController');
 module.exports = function (app, db) {
 
     app.get('/blog/post/:id', function (req, res) {
-        controller.findPostById(req, res, db);
+        controller.findPostById(req, res);
     });
 
     app.get('/blog/post', function (req, res) {

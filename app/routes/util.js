@@ -59,14 +59,6 @@ module.exports = function () {
         }
     };
 
-    this.getAdminUser = function (req, res) {
-        try {
-
-        } catch (err) {
-            return 401;
-        }
-    };
-
     this.isDevEnvironment = function () {
         try {
             console.log(process.argv);

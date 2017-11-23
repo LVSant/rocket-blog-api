@@ -17,59 +17,59 @@ chai.use(chaiHttp);
 describe('Unit Testing - testUser', function () {
 
     var token = '';
-    before(function (done) {
+    beforeEach(function (done) {
 
         User.remove({}, function (err, removed) {
             if (err) {
-                console.log('Failed to remove all', err);
-            } else if (removed) {
-                console.log('removido todos usuarios');
-                var hash = bcrypt.hashSync(config.userAdminPassword, 10);
-                var user = new User({
-                    _id: null,
-                    name: "Snoopy",
-                    email: "ab",
-                    password: hash,
-                    role: "superadmin",
-                    date: new Date()
-                });
-
-                User.create(user, function (err, User) {
-                    if (err) {
-                        console.log('failed to create admin', err);
-                    }
-                    if (User) {
-                        chai.request(server)
-                                .post('/admin/auth')
-                                .send({email: 'ab', password: config.userAdminPassword})
-                                .end(function (err, res) {
-                                    if (res) {
-                                        should.not.exist(err);
-                                        token = res.body.token;
-                                    }
-                                });
-                    }
-                });
-
-                var newUser = new User({
-                    _id: null,
-                    name: "João Jozé",
-                    email: "joaojoze@jozejoao.com",
-                    role: "member",
-                    date: "2018-04-20T16:20:00.000Z"
-                });
-
-                User.create(newUser, function (err, user) {
-                    if (err) {
-                        console.error('failed to create user:', err);
-                    }
-                    if (user) {
-                        done();
-                        console.log('creating user for test');
-                    }
-                });
+                throw err;
             }
-        });
+            var hash = bcrypt.hashSync(config.userAdminPassword, 10);
+            var user = new User({
+                _id: null,
+                name: "Snoopy",
+                email: "ab",
+                password: hash,
+                role: "superadmin",
+                date: new Date()
+            });
+
+            User.create(user, function (err, newUser) {
+                if (err) {
+                    throw err;
+                }
+                if (newUser) {
+                    chai.request(server)
+                            .post('/admin/auth')
+                            .send({email: 'ab', password: config.userAdminPassword})
+                            .end(function (err, res) {
+                                if (res) {
+                                    should.not.exist(err);
+                                    token = res.body.token;
+                                    done();
+                                }
+                            });
+
+                    var testUser = new User({
+                        _id: null,
+                        name: "João Jozé",
+                        email: "joaojoze@jozejoao.com",
+                        role: "member",
+                        date: "2018-04-20T16:20:00.000Z"
+                    });
+
+                    User.create(testUser, function (err, newTestUser) {
+                        if (err) {
+                            throw err;
+                        }
+                        if (newTestUser) {
+                            
+                        }
+                    });
+
+                }
+            });
+
+        });       
     });
 
     describe('/GET admin/user', () => {
@@ -86,20 +86,15 @@ describe('Unit Testing - testUser', function () {
 
                         //testing superadmin user
                         res.body.users[0].should.have.property('_id');
-                        res.body.users[0].should.have.property('name');
-                        res.body.users[0].should.have.property('email');
-                        res.body.users[0].should.have.property('role');
                         res.body.users[0].should.have.property('date');
-
                         res.body.users[0].name.should.equal('Snoopy');
                         res.body.users[0].email.should.equal('ab');
                         res.body.users[0].role.should.equal('superadmin');
 
                         //testing member user
                         res.body.users[1].should.have.property('_id');
-                        res.body.users[1].should.have.property('name');
-                        res.body.users[1].should.have.property('email');
                         res.body.users[1].should.have.property('role');
+                        expect(res.body.users[1].role).to.equal('member');                        
                         res.body.users[1].should.have.property('date');
 
                         res.body.users[1].name.should.equal('João Jozé');
@@ -116,8 +111,6 @@ describe('Unit Testing - testUser', function () {
         User.remove({date: "2018-04-20T16:20:00.000Z"}, function (err, removed) {
             if (err)
                 throw err;
-            if (removed)
-                console.log('User for test removedF');
             done();
         });
     });

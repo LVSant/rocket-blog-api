@@ -73,8 +73,6 @@ describe('Unit Testing - testPosts', function () {
         Post.remove({date: "2018-04-20T16:20:00.000Z"}, function (err, removed) {
             if (err)
                 throw err;
-            if (removed)
-                console.log('Post for test removed');
             done();
         });
     });

@@ -59,10 +59,9 @@ module.exports = function () {
         }
     };
 
-    this.isDevEnvironment = function () {
+    this.isProdEnvironment = function () {
         try {
-            console.log(process.argv);
-            return process.argv[3] === 'dev';
+            return process.argv[3] === 'prod';
         } catch (err) {
             return true;
         }

@@ -8,9 +8,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.js --env dev",
-    "start": "node server.js",
-    "test": "mocha app/test --exit",
-    "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
+    "start": "node server.js --env prod",
+    "test": "mocha --env dev app/test --exit",
     "standard": "standard index.js"
   },
   "author": "leonardo viveiros",

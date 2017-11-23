@@ -69,7 +69,7 @@ module.exports = function () {
 
     this.setupEnvironment = function (done = null) {
 
-        User.findOne({'email': 'ab', 'role': 'superadmin'}, function (err, superAdmin) {
+        User.findOne({'role': 'superadmin'}, function (err, superAdmin) {
 
             if (err) {
                 throw err;

@@ -51,10 +51,21 @@ exports.edit = function (req, res) {
                         if (err)
                             res.status(500).send({ success: false, message: 'Failed to find user to update' });
 
-                        user.name = req.body['name'];
-                        user.email = req.body['email'];
-                        user.role = req.body['role'];
-                        if (req.body['password'] !== undefined) {
+                        var newName = req.body['name'];
+                        var newEmail = req.body['email'];
+                        var newRole = req.body['role'];
+                        var newPassword = req.body['password'];
+
+                        if (newName)
+                            user.name = req.body['name'];
+
+                        if (newEmail)
+                            user.email = req.body['email'];
+
+                        if (newRole)
+                            user.role = req.body['role'];
+
+                        if (newPassword) {
                             var hashpasswd = bcrypt.hashSync(req.body.password, 10);
                             user.password = hashpasswd;
                         }

@@ -75,7 +75,7 @@ exports.edit = function (req, res) {
                                 res.status(500).send({ success: false, message: 'Failed to update user' });
                             updatedUser.password = undefined;
 
-                            if (hashpasswd) {
+                            if (hashpasswd && loggedUserId === editUserId) {
                                 util.authorization(req, res);
                             }
                             else {

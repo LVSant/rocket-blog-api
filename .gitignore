@@ -60,4 +60,8 @@ typings/
 /nbproject/private/
 
 
+# local configuration
 config.js
+
+# IDE configuration
+vscode/

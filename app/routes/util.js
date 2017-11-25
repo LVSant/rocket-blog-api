@@ -52,10 +52,10 @@ module.exports = function () {
                     }
                 });
             } else {
-                return res.status(403).send({message: 'No token provided.'});
+                return res.status(403).send({success:false, message: 'No token provided.'});
             }
         } catch (err) {
-            return res.status(403).send('Error trying to decode token. ' + err);
+            return res.status(403).send({success:false, message:'Error trying to decode token.'});
         }
     };
 

@@ -35,8 +35,8 @@ exports.create = function (req, res) {
                 if (Post) {
                     res.status(200).send({
                         success: true,
-                        message: 'Post successfuly created!',
-                        object: Post
+                        post: Post
+                        
                     });
 
                 }
@@ -87,7 +87,7 @@ exports.edit = function (req, res) {
         post.save(function (err, updatedPost) {
             if (err)
                 res.status(500).send({success: false, message: 'Failed to update post'});
-            res.status(200).send(updatedPost);
+            res.status(200).send({success:true, post: updatedPost});
         });
     });
 };
@@ -108,7 +108,7 @@ exports.findPostById = function (req, res) {
         if (!post) {
             res.status(403).send({success: false, message: 'Post not found'});
         }
-        res.status(200).send(post);
+        res.status(200).send({success:true, post:post});
     });
 };
 
@@ -132,7 +132,7 @@ exports.getAllPostResume = function (req, res, db) {
                 "author": post["author"]};
         });
 
-        res.send(resumePost);
+        res.send({success:true, posts:resumePost});
     });
 };
 
@@ -141,8 +141,8 @@ exports.findPostAdmin = function (req, res) {
         Post.find({}, function (err, posts) {
 
             if (err)
-                res.status(500).send(posts);
-            res.send(posts);
+                res.status(500).send({success:false, message:'Failed to find posts'});
+            res.send({success:true, posts:posts});
         });
 
     });

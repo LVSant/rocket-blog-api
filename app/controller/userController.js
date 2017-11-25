@@ -79,7 +79,7 @@ exports.edit = function (req, res) {
                                 util.authorization(req, res);
                             }
                             else {
-                                res.status(200).send(updatedUser);
+                                res.status(200).send({success:true, user:updatedUser});
                             }
                         });
                     });

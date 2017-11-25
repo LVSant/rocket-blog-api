@@ -6,39 +6,37 @@ var User = require('../model/user');
 
 function validatePost(req, res, cb) {
     util.decode(req, res, function () {
-        try {
 
-            var details = {
-                '_id': new ObjectID(req.decoded.id)
-            };
+        var details = {
+            '_id': new ObjectID(req.decoded.id)
+        };
 
-            User.findOne(details, function (err, user) {
-                if (err) throw err;
-                if (user) {
-                    var newPost = new Post({
-                        "_id": new ObjectID(),
-                        "title": req.body.title,
-                        "titleUrl": module.exports.getPostURL(req.body.title),
-                        "img": req.body.img,
-                        "resumeContent": req.body.resumeContent,
-                        "content": req.body.content,
-                        "category": req.body.category,
-                        "date": new Date(),
-                        "author": user.name
-                    });
-                }
+        User.findOne(details, function (err, user) {
+            if (err) throw err;
+            if (!user) {
+                cb();
+            }
+            if (user) {
+                var newPost = new Post({
+                    "_id": new ObjectID(),
+                    "title": req.body.title,
+                    "titleUrl": module.exports.getPostURL(req.body.title),
+                    "img": req.body.img,
+                    "resumeContent": req.body.resumeContent,
+                    "content": req.body.content,
+                    "category": req.body.category,
+                    "date": new Date(),
+                    "author": user.name
+                });
                 cb(newPost);
-            });
-        } catch (ex) {
-            console.error('post not valid:', ex);
-        }
+            }
+        });
     });
 };
 
 exports.create = function (req, res) {
 
     validatePost(req, res, function (validPost) {
-
         if (validPost) {
             Post.create(validPost, function (err, Post) {
                 if (err) {
@@ -132,26 +130,37 @@ exports.findPostById = function (req, res) {
 /*
  *   GET all posts; URL: /post/
  */
-exports.getAllPostResume = function (req, res, db) {
+exports.getPostsQuery = function (req, res) {
 
-    Post.find({}, function (err, posts) {
-        if (err)
-            throw err;
-        var resumePost = posts.map(function (post) {
-            return {
-                "titleUrl": post["titleUrl"],
-                "title": post["title"],
-                "img": post["img"],
-                "resumeContent": post["resumeContent"],
-                "content": post["content"],
-                "category": post["category"],
-                "date": post["date"],
-                "author": post["author"]
-            };
+    var page = parseInt(req.query.page) - 1;
+    var size = parseInt(req.query.size);
+    var totalPosts = Post.count({});
+
+    Post
+        .find({})
+        // .sort({ date: 1 })
+        // .skip(page * size)
+        // .limit(size)
+        .exec(function (err, posts) {
+            if (err)
+                throw err;
+            var resumePost = posts.map(function (post) {
+                return {
+                    "titleUrl": post["titleUrl"],
+                    "title": post["title"],
+                    "img": post["img"],
+                    "resumeContent": post["resumeContent"],
+                    "content": post["content"],
+                    "category": post["category"],
+                    "date": post["date"],
+                    "author": post["author"]
+                };
+            });
+
+            var totalPages = Math.ceil(totalPosts / size);
+
+            res.send({ success: true, pageCount: totalPages, page: page, posts: resumePost });
         });
-
-        res.send({ success: true, posts: resumePost });
-    });
 };
 
 exports.findPostAdmin = function (req, res) {

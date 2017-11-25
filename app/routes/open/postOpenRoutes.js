@@ -7,12 +7,6 @@ module.exports = function (app) {
     });
 
     app.get('/blog/post', function (req, res) {
-        if (req.query.category) {
-            console.log('get with query parameter');
-            controller.findPostByCategory(req, res);
-        } else {
-            console.log('get without query parameter');
-            controller.getAllPostResume(req, res);
-        }
+        controller.getPostsQuery(req, res);
     });
 };

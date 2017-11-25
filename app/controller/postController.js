@@ -132,35 +132,42 @@ exports.findPostById = function (req, res) {
  */
 exports.getPostsQuery = function (req, res) {
 
-    var page = parseInt(req.query.page) - 1;
+    var page = parseInt(req.query.page);
     var size = parseInt(req.query.size);
-    var totalPosts = Post.count({});
+    var skip = page > 0 ? page * size : 0;
 
-    Post
-        .find({})
-        // .sort({ date: 1 })
-        // .skip(page * size)
-        // .limit(size)
-        .exec(function (err, posts) {
-            if (err)
-                throw err;
-            var resumePost = posts.map(function (post) {
-                return {
-                    "titleUrl": post["titleUrl"],
-                    "title": post["title"],
-                    "img": post["img"],
-                    "resumeContent": post["resumeContent"],
-                    "content": post["content"],
-                    "category": post["category"],
-                    "date": post["date"],
-                    "author": post["author"]
-                };
+    var totalPosts = Post.count({}, function (err, totalPosts) {
+
+        if(err) res.status(500).send('error');
+
+        
+        var totalPages = Math.ceil(totalPosts / size);
+
+        Post
+            .find({})
+            .sort({ date: 1 })
+            .skip(page * size)
+            .limit(size)
+            .exec(function (err, posts) {
+                if (err)
+                    throw err;
+                var resumePost = posts.map(function (post) {
+                    return {
+                        "titleUrl": post["titleUrl"],
+                        "title": post["title"],
+                        "img": post["img"],
+                        "resumeContent": post["resumeContent"],
+                        "content": post["content"],
+                        "category": post["category"],
+                        "date": post["date"],
+                        "author": post["author"]
+                    };
+                });
+
+
+                res.send({ success: true, pageCount: totalPages, page: page, posts: resumePost });
             });
-
-            var totalPages = Math.ceil(totalPosts / size);
-
-            res.send({ success: true, pageCount: totalPages, page: page, posts: resumePost });
-        });
+    });
 };
 
 exports.findPostAdmin = function (req, res) {

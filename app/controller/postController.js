@@ -147,7 +147,7 @@ exports.getPostsQuery = function (req, res) {
 
         Post
             .find({})
-            .sort({ creationDate: 1 })
+            .sort({ creationDate: -1 })
             .skip(page * size)
             .limit(size)
             .exec(function (err, posts) {
@@ -175,7 +175,7 @@ exports.getPostsQuery = function (req, res) {
 exports.findPostAdmin = function (req, res) {
     util.decode(req, res, function () {
         Post.find({})
-            .sort({ creationDate: 1 })
+            .sort({ creationDate: -1 })
             .exec(function (err, posts) {
 
                 if (err)

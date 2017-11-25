@@ -26,7 +26,7 @@ module.exports = app.listen(process.env.PORT || 8080, function () {
     }
 
     mongoose.connection.once('open', function () {
-        util.setupEnvironment();
+         util.setupEnvironment();
         require('./app/routes')(app);
     }).on('error', function () {
         console.log('Failed to connect to MongoDB!');

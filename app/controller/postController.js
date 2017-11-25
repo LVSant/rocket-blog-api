@@ -13,22 +13,24 @@ function validatePost(req, res, cb) {
 
         User.findOne(details, function (err, user) {
             if (err) throw err;
-            if (!user) {
-                cb();
+            var blogTitle = req.body.title;
+            var base64Img = req.body['img'] || '';
+
+            if (!user || !blogTitle || !req.body['content'] || !req.body['category']) {
+                return cb(false);
             }
             if (user) {
                 var newPost = new Post({
                     "_id": new ObjectID(),
-                    "title": req.body.title,
-                    "titleUrl": module.exports.getPostURL(req.body.title),
-                    "img": req.body.img,
-                    "resumeContent": req.body.resumeContent,
+                    "title": blogTitle,
+                    "titleUrl": module.exports.getPostURL(blogTitle),
+                    "img": base64Img,
                     "content": req.body.content,
                     "category": req.body.category,
                     "date": new Date(),
                     "author": user.name
                 });
-                cb(newPost);
+                return cb(newPost);
             }
         });
     });
@@ -138,14 +140,14 @@ exports.getPostsQuery = function (req, res) {
 
     var totalPosts = Post.count({}, function (err, totalPosts) {
 
-        if(err) res.status(500).send('error');
+        if (err) res.status(500).send('error');
 
-        
+
         var totalPages = Math.ceil(totalPosts / size);
 
         Post
             .find({})
-            .sort({ date: 1 })
+            .sort({ creationDate: 1 })
             .skip(page * size)
             .limit(size)
             .exec(function (err, posts) {
@@ -172,12 +174,14 @@ exports.getPostsQuery = function (req, res) {
 
 exports.findPostAdmin = function (req, res) {
     util.decode(req, res, function () {
-        Post.find({}, function (err, posts) {
+        Post.find({})
+            .sort({ creationDate: 1 })
+            .exec(function (err, posts) {
 
-            if (err)
-                res.status(500).send({ success: false, message: 'Failed to find posts' });
-            res.send({ success: true, posts: posts });
-        });
+                if (err)
+                    res.status(500).send({ success: false, message: 'Failed to find posts' });
+                res.send({ success: true, posts: posts });
+            });
 
     });
 };

@@ -11,11 +11,11 @@ module.exports = function () {
         var password = req.body.password;
         if (email) {
             if (password) {
-                User.findOne({email: email}, function (err, user) {
+                User.findOne({ email: email }, function (err, user) {
                     if (err)
-                        res.status(500).send({success: false, message: 'Error'});
+                        res.status(500).send({ success: false, message: 'Error' });
                     if (!user)
-                        res.status(404).send({success: false, message: 'User not found'});
+                        res.status(404).send({ success: false, message: 'User not found' });
 
                     if (bcrypt.compareSync(password, user.password)) {
                         var payload = {
@@ -26,16 +26,17 @@ module.exports = function () {
                         });
                         res.json({
                             success: true,
-                            token: token});
+                            token: token
+                        });
                     } else {
-                        res.status(401).send({success: false, message: 'User not found'});
+                        res.status(401).send({ success: false, message: 'User not found' });
                     }
                 });
             } else {
-                res.status(401).send({success: false, message: 'Missing Password'});
+                res.status(401).send({ success: false, message: 'Missing Password' });
             }
         } else {
-            res.status(401).send({success: false, message: 'Missing Email'});
+            res.status(401).send({ success: false, message: 'Missing Email' });
         }
     };
 
@@ -45,17 +46,17 @@ module.exports = function () {
             if (token) {
                 jwt.verify(token, config.jwtSecret, function (err, decoded) {
                     if (err) {
-                        return res.json({success: false, message: 'Failed to authenticate token.'});
+                        return res.json({ success: false, message: 'Failed to authenticate token.' });
                     } else {
                         req.decoded = decoded;
                         cb();
                     }
                 });
             } else {
-                return res.status(403).send({success:false, message: 'No token provided.'});
+                return res.status(403).send({ success: false, message: 'No token provided.' });
             }
         } catch (err) {
-            return res.status(403).send({success:false, message:'Error trying to decode token.'});
+            return res.status(403).send({ success: false, message: 'Error trying to decode token.' });
         }
     };
 
@@ -69,7 +70,7 @@ module.exports = function () {
 
     this.setupEnvironment = function (done = null) {
 
-        User.findOne({'role': 'superadmin'}, function (err, superAdmin) {
+        User.findOne({ 'role': 'superadmin' }, function (err, superAdmin) {
 
             if (err) {
                 throw err;
@@ -78,19 +79,16 @@ module.exports = function () {
                     console.log('superAdmin found');
                 } else {
                     console.log('superAdmin not found');
-                    User.remove({}, function (err, removed) {
+                    User.remove({ role: 'superadmin' }, function (err, removed) {
                         if (err)
                             throw err;
-                        if (removed) {
-                            console.log('deleted all users');
-                        }
                     });
 
                     var hash = bcrypt.hashSync(config.userAdminPassword, 10);
 
                     var user = new User({
                         _id: null,
-                        name: "Snoopy",
+                        name: "Super Admin",
                         email: "ab",
                         password: hash,
                         role: "superadmin",

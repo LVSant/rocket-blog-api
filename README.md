@@ -8,7 +8,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-In order to build the project, it's necessary to have isntalled in your system the following packages:
+In order to build the project, it's necessary to have installed in your system the following packages:
 
  - npm@5.5.1
  - node@8.9.1
@@ -32,7 +32,7 @@ npm install
 
 #### Set up environment variables 
 There are four necessary variables used, and for safety purpouses, their values are only on the server
-In order to run the project locally, we need to set the values of this variables.
+In order to run the project locally, we need to set the values of these variables.
 
 The variables are:
 - jwtSecret - Contains the secret password used in JsonWebToken
@@ -77,5 +77,5 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-**<>** with :heart: by Leonardo Viveiros
+:code: with :heart: by Leonardo Viveiros
 

@@ -77,5 +77,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-:code: with :heart: by Leonardo Viveiros
-
+ <span style="font-size:larger;"></></span> with :green_heart: by Leonardo Viveiros

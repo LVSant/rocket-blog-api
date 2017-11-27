@@ -89,7 +89,7 @@ module.exports = function () {
                     var user = new User({
                         _id: null,
                         name: "Super Admin",
-                        email: "ab",
+                        email: "admin",
                         password: hash,
                         role: "superadmin",
                         date: new Date()

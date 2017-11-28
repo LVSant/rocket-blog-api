@@ -26,7 +26,7 @@ function validatePost(req, res, cb) {
                     "titleUrl": module.exports.getPostURL(blogTitle),
                     "img": base64Img,
                     "content": req.body.content,
-                    "category": req.body.category,
+                    "category": req.body.category.toString().toLowerCase(),
                     "date": new Date(),
                     "author": user.name
                 });
@@ -97,7 +97,7 @@ exports.edit = function (req, res) {
         post.img = req.body['img'];
         post.resumeContent = req.body['resumeContent'];
         post.content = req.body['content'];
-        post.category = req.body['category'];
+        post.category = req.body['category'].toString().toLowerCase();
         post.author = req.body['author'];
 
 
@@ -136,17 +136,22 @@ exports.getPostsQuery = function (req, res) {
 
     var page = parseInt(req.query.page);
     var size = parseInt(req.query.size);
+    var category = parseInt(req.query.category);
+
     var skip = page > 0 ? page * size : 0;
 
+    var query = {};
+    if (req.query.category) {
+        query = { category: req.query.category };
+    }
+
     var totalPosts = Post.count({}, function (err, totalPosts) {
-
         if (err) res.status(500).send('error');
-
 
         var totalPages = Math.ceil(totalPosts / size);
 
         Post
-            .find({})
+            .find(query)
             .sort({ creationDate: -1 })
             .skip(page * size)
             .limit(size)

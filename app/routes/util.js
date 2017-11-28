@@ -12,22 +12,24 @@ module.exports = function () {
         if (email) {
             if (password) {
                 User.findOne({ email: email }, function (err, user) {
-                    if (err)
-                        res.status(500).send({ success: false, message: 'Error' });
-                    if (!user)
-                        res.status(404).send({ success: false, message: 'User not found' });
 
-                    if (bcrypt.compareSync(password, user.password)) {
-                        var payload = {
-                            id: user._id
-                        };
-                        var token = jwt.sign(payload, config.jwtSecret, {
-                            expiresIn: 60 * 60 * 2//2h
-                        });
-                        res.json({
-                            success: true,
-                            token: token
-                        });
+                    if (err) {
+                        return res.status(500).send({ success: false, message: 'Error' });
+                    }
+                    if (user) {
+
+                        if (bcrypt.compareSync(password, user.password)) {
+                            var payload = {
+                                id: user._id
+                            };
+                            var token = jwt.sign(payload, config.jwtSecret, {
+                                expiresIn: 60 * 60 * 2//2h
+                            });
+                            return res.json({
+                                success: true,
+                                token: token
+                            });
+                        }
                     } else {
                         res.status(401).send({ success: false, message: 'User not found' });
                     }

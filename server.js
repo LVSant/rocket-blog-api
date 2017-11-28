@@ -7,7 +7,7 @@ var utilConf = require("./app/routes/util");
 var util = new utilConf();
 var mongoose = require('mongoose');
 
-app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.json({ limit: '5mb' }));
 
 mongoose.Promise = global.Promise;
 module.exports = app.listen(process.env.PORT || 8080, function () {

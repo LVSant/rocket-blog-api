@@ -126,7 +126,7 @@ exports.findPostByURL = function (req, res) {
         };
 
 
-    Post.find(details, function (err, post) {
+    Post.findOne(details, function (err, post) {
         if (err) {
             res.status(500).send({ success: false, message: 'Failed to find post' });
         }

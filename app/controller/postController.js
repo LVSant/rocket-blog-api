@@ -26,6 +26,7 @@ function validatePost(req, res, cb) {
                     "titleUrl": module.exports.getPostURL(blogTitle),
                     "img": base64Img,
                     "content": req.body.content,
+                    "resumeContent": req.body.resumeContent,
                     "category": req.body.category.toString().toLowerCase(),
                     "date": new Date(),
                     "author": user.name
@@ -94,6 +95,7 @@ exports.edit = function (req, res) {
         }
 
         post.title = req.body['title'];
+        post.titleUrl = req.body['titleUrl'];
         post.img = req.body['img'];
         post.resumeContent = req.body['resumeContent'];
         post.content = req.body['content'];
@@ -112,11 +114,14 @@ exports.edit = function (req, res) {
 /*
  *   GET one post; URL: /blog/post/id
  */
-exports.findPostById = function (req, res) {
-    var id = req.params.id;
-    var details = {
-        '_id': new ObjectID(id)
-    };
+exports.findPostByURL = function (req, res) {
+    var url = req.params.postUrl;
+    var details = {};
+    if (url)
+        details = {
+            'titleUrl': url
+        };
+
 
     Post.find(details, function (err, post) {
         if (err) {

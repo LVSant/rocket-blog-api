@@ -154,7 +154,7 @@ exports.getPostsQuery = function (req, res) {
         query = { category: req.query.category };
     }
 
-    var totalPosts = Post.count({}, function (err, totalPosts) {
+    var totalPosts = Post.count(query, function (err, totalPosts) {
         if (err) res.status(500).send('error');
 
         var totalPages = Math.ceil(totalPosts / size);

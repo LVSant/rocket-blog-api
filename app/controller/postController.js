@@ -168,16 +168,18 @@ exports.getPostsQuery = function (req, res) {
                 if (err)
                     throw err;
                 var resumePost = posts.map(function (post) {
-                    return {
+                    var postReturn = {
                         "titleUrl": post["titleUrl"],
                         "title": post["title"],
                         "img": post["img"],
                         "resumeContent": post["resumeContent"],
-                        "content": post["content"],
+                        // "content": post["content"],
                         "category": post["category"],
                         "date": post["date"],
                         "author": post["author"]
                     };
+
+                    return postReturn;
                 });
 
 

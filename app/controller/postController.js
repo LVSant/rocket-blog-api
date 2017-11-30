@@ -130,10 +130,11 @@ exports.findPostByURL = function (req, res) {
         if (err) {
             res.status(500).send({ success: false, message: 'Failed to find post' });
         }
-        if (!post) {
+        if (post) {
+            res.status(200).send({ success: true, post: post });
+        } else {
             res.status(403).send({ success: false, message: 'Post not found' });
         }
-        res.status(200).send({ success: true, post: post });
     });
 };
 
@@ -214,7 +215,9 @@ exports.getPostURL = function (postTitle) {
     };
 
     var postTitleSplitted = postTitle.toString().split(' ').toString();
-    var postTitleSplitted = postTitleSplitted.replace(/,/g, '-').latinize();
+    var postTitleSplitted = postTitleSplitted.replace(/,/g, '-');
+    var postTitleSplitted = postTitleSplitted.replace(/\?/g, '');
+    var postTitleSplitted = postTitleSplitted.replace(/\!/g, '').latinize();
 
-    return postTitleSplitted;
+    return postTitleSplitted.toLowerCase();
 };

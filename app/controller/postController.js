@@ -90,24 +90,26 @@ exports.edit = function (req, res) {
     Post.findById(edittedPostId, function (err, post) {
         if (err)
             res.status(500).send({ success: false, message: 'Error' });
-        if (!post) {
+        if (post) {
+
+            post.title = req.body['title'];
+            post.titleUrl = module.exports.getPostURL(req.body['title']),
+                post.img = req.body['img'];
+            post.resumeContent = req.body['resumeContent'];
+            post.content = req.body['content'];
+            post.category = req.body['category'].toString().toLowerCase();
+            post.author = req.body['author'];
+
+
+            post.save(function (err, updatedPost) {
+                if (err)
+                    res.status(500).send({ success: false, message: 'Failed to update post' });
+                res.status(200).send({ success: true, post: updatedPost });
+            });
+        } else {
+
             res.status(403).send({ success: false, message: 'Failed to find post' });
         }
-
-        post.title = req.body['title'];
-        post.titleUrl = req.body['titleUrl'];
-        post.img = req.body['img'];
-        post.resumeContent = req.body['resumeContent'];
-        post.content = req.body['content'];
-        post.category = req.body['category'].toString().toLowerCase();
-        post.author = req.body['author'];
-
-
-        post.save(function (err, updatedPost) {
-            if (err)
-                res.status(500).send({ success: false, message: 'Failed to update post' });
-            res.status(200).send({ success: true, post: updatedPost });
-        });
     });
 };
 

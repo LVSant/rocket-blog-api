@@ -117,7 +117,8 @@ exports.edit = function (req, res) {
  *   GET one post; URL: /blog/post/id
  */
 exports.findPostByURL = function (req, res) {
-    var url = req.params.postUrl;
+
+    var url = req.params.url;
     var details = {};
     if (url)
         details = {
